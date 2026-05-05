@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Contratos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 56px;
+        }
+        .main-content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Rapidito</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/clientes}">Clientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/vehiculos}">Vehículos</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/contratos}">Contratos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/reservas}">Reservas</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container mt-4">
+        <h1>Lista de Contratos</h1>
+        <a href="/contratos/new" class="btn btn-primary mb-3">Nuevo Contrato</a>
+        
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Vehículo</th>
+                    <th>Fecha Inicio</th>
+                    <th>Fecha Fin</th>
+                    <th>Días</th>
+                    <th>Total</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="contrato : ${contratos}">
+                    <td th:text="${contrato.id}">ID</td>
+                    <td th:text="${contrato.cliente?.nombre + ' ' + contrato.cliente?.apellido}">Cliente</td>
+                    <td th:text="${contrato.vehiculo?.marca + ' ' + contrato.vehiculo?.modelo}">Vehículo</td>
+                    <td th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}">Fecha Inicio</td>
+                    <td th:text="${#temporals.format(contrato.fechaFin, 'dd/MM/yyyy')}">Fecha Fin</td>
+                    <td th:text="${contrato.numeroDias}">Días</td>
+                    <td th:text="${contrato.totalContrato}">Total</td>
+                    <td>
+                        <a th:href="@{/contratos/{id}(id=${contrato.id})}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="@{/contratos/{id}/edit(id=${contrato.id})}" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="@{/contratos/{id}/delete(id=${contrato.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este contrato?')">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+    <div class="container">
+        <p>&copy; 2026 Rapidito</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

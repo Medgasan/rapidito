@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${editMode} ? 'Editar Contrato' : 'Nuevo Contrato'">Contrato</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 56px;
+        }
+        .main-content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Rapidito</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/clientes}">Clientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/vehiculos}">Vehículos</a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/contratos}">Contratos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/reservas}">Reservas</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="container mt-4">
+        <h1 th:text="${editMode} ? 'Editar Contrato' : 'Nuevo Contrato'">Contrato</h1>
+        
+        <form th:action="@{/contratos/(id=${contrato.id})}" th:object="${contrato}" method="post">
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <select class="form-control" id="cliente" th:field="*{cliente}" required>
+                    <option value="">Seleccione un cliente</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="vehiculo">Vehículo:</label>
+                <select class="form-control" id="vehiculo" th:field="*{vehiculo}" required>
+                    <option value="">Seleccione un vehículo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaInicio">Fecha de Inicio:</label>
+                <input type="date" class="form-control" id="fechaInicio" th:field="*{fechaInicio}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaFin">Fecha de Fin:</label>
+                <input type="date" class="form-control" id="fechaFin" th:field="*{fechaFin}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="numeroDias">Número de Días:</label>
+                <input type="number" class="form-control" id="numeroDias" th:field="*{numeroDias}" required min="1">
+            </div>
+            
+            <div class="form-group">
+                <label for="precioVehiculo">Precio del Vehículo:</label>
+                <input type="number" step="0.01" class="form-control" id="precioVehiculo" th:field="*{precioVehiculo}" required min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="totalContrato">Total del Contrato:</label>
+                <input type="number" step="0.01" class="form-control" id="totalContrato" th:field="*{totalContrato}" required min="0">
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="@{/contratos/}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+    <div class="container">
+        <p>&copy; 2026 Rapidito</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

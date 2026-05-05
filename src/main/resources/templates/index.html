@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Rapidito - Sistema de Alquiler de Vehículos</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 56px;
+        }
+        .main-content {
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">Rapidito</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/}">Inicio <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/clientes}">Clientes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/vehiculos}">Vehículos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/contratos}">Contratos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/reservas}">Reservas</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-content">
+    <div class="jumbotron">
+        <div class="container">
+            <h1 class="display-4">Bienvenido a Rapidito</h1>
+            <p class="lead">Sistema de gestión para alquiler de vehículos</p>
+            <hr class="my-4">
+            <p>Gestione eficientemente clientes, vehículos, contratos y reservas desde un solo lugar.</p>
+            <a class="btn btn-primary btn-lg" th:href="@{/clientes}" role="button">Comenzar</a>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row text-center">
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h3>Clientes</h3>
+                            <p>Gestione toda la información de sus clientes</p>
+                        </div>
+                        <a th:href="@{/clientes}" class="btn btn-outline-primary">Ver clientes</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h3>Vehículos</h3>
+                            <p>Administre su flota de vehículos</p>
+                        </div>
+                        <a th:href="@{/vehiculos}" class="btn btn-outline-primary">Ver vehículos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h3>Contratos</h3>
+                            <p>Controle los contratos de alquiler</p>
+                        </div>
+                        <a th:href="@{/contratos}" class="btn btn-outline-primary">Ver contratos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div>
+                            <h3>Reservas</h3>
+                            <p>Gestione las reservas activas</p>
+                        </div>
+                        <a th:href="@{/reservas}" class="btn btn-outline-primary">Ver reservas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white text-center py-3 mt-auto">
+    <div class="container">
+        <p>&copy; 2026 Rapidito - Sistema de Alquiler de Vehículos</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
