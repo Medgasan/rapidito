@@ -51,7 +51,7 @@
     <div class="container mt-4">
         <h1 th:text="${editMode} ? 'Editar Cliente' : 'Nuevo Cliente'">Cliente</h1>
         
-        <form th:action="@{/clientes/(id=${cliente.id})}" th:object="${cliente}" method="post">
+        <form th:action="@{/clientes/{id}(id=${cliente.id})}" th:object="${cliente}" method="post">
             <div class="form-group">
                 <label for="nombre">Nombre:</label>
                 <input type="text" class="form-control" id="nombre" th:field="*{nombre}" required>

@@ -14,7 +14,7 @@ public class VehiculoDTO {
     private String matricula;
     private String tipoCombustible;
     private float precioDia;
-//    private List<ReservaDTO> reservas;
-//    private List<ContratoDTO> contratos;
+    private List<ReservaDTO> reservas;
+    private List<ContratoDTO> contratos;
 
 }

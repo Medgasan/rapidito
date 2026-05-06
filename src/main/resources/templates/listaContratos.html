@@ -75,9 +75,9 @@
                     <td th:text="${contrato.numeroDias}">Días</td>
                     <td th:text="${contrato.totalContrato}">Total</td>
                     <td>
-                        <a th:href="@{/contratos/{id}(id=${contrato.id})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/contratos/{id}/edit(id=${contrato.id})}" class="btn btn-sm btn-warning">Editar</a>
-                        <a th:href="@{/contratos/{id}/delete(id=${contrato.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este contrato?')">Eliminar</a>
+                        <a th:href="'/contratos/' + ${contrato.id}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="'/contratos/' + ${contrato.id} + '/edit'" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="'/contratos/' + ${contrato.id} + '/delete'" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este contrato?')">Eliminar</a>
                     </td>
                 </tr>
             </tbody>

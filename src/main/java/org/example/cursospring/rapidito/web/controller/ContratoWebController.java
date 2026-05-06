@@ -34,7 +34,7 @@ public class ContratoWebController {
                 .uri("/contratos/")
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ContratoDTO>>() {});
-        model.addAttribute("clientes", dtos);
+        model.addAttribute("contratos", dtos);
         return "listaContratos";
     }
 
@@ -42,28 +42,28 @@ public class ContratoWebController {
     // Crear - obtener datos
     @GetMapping("/new")
     public String nuevoContrato(Model model){
-        model.addAttribute("cliente", new ContratoDTO());
+        model.addAttribute("contrato", new ContratoDTO());
         model.addAttribute("editMode", true);
         return "contrato";
     }
 
 
     // Crear - guardar datos
-    @PostMapping("/{id}")
-    public String guardarContrato(@PathVariable Long id, @ModelAttribute ContratoDTO contratoDTO){
+    @PostMapping("/")
+    public String guardarContrato(@ModelAttribute ContratoDTO contratoDTO){
 
         ContratoDTO dto = restClient.post()
-                .uri("/contratos/{id}", id)
+                .uri("/contratos/")
                 .body(contratoDTO)
                 .retrieve()
                 .body(ContratoDTO.class);
 
-        return "redirect:/contrato/" + contratoDTO.getId();
+        return "redirect:/contratos/" + dto.getId();
     }
 
 
     // ver
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public String mostrarContrato(Model model, @PathVariable Long id){
 
         ContratoDTO dto = restClient.get()
@@ -78,7 +78,7 @@ public class ContratoWebController {
 
 
     // editar/actualizar
-    @GetMapping("/id/edit")
+    @GetMapping("/{id}/edit")
     public String editarContrato(Model model, @PathVariable Long id){
 
         ContratoDTO dto = restClient.get()
@@ -100,7 +100,7 @@ public class ContratoWebController {
                 .body(contratoDTO)
                 .retrieve()
                 .body(ContratoDTO.class);
-        return "redirect:/contrato/" + contratoDTO.getId();
+        return "redirect:/contratos/" + dto.getId();
     }
 
 

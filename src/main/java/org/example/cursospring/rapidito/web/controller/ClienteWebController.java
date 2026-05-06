@@ -31,13 +31,11 @@ public class ClienteWebController {
     // mostrar todos
     @GetMapping("/")
     public String mostrarClientes(Model model){
-
-        List<ClienteDTO> dto = restClient.get()
-        .uri("/clientes/") // Esto llamará a http://localhost:8080/api/clientes/
-        .retrieve()
-        .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
-
-        model.addAttribute("clientes", dto);
+        List<ClienteDTO> dtos = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+        model.addAttribute("clientes", dtos);
         return "listaClientes";
     }
 
@@ -55,13 +53,13 @@ public class ClienteWebController {
     @PostMapping("/")
     public String guardarCliente(@ModelAttribute ClienteDTO clienteDTO){
 
-        ClienteDTO dto= restClient.post()
+        ClienteDTO dto= restClient.put()
                 .uri("/clientes/")
                 .body(clienteDTO)
                 .retrieve()
                 .body(clienteDTO.getClass());
 
-        return "redirect:/cliente/" + dto.getId();
+        return "redirect:/clientes/" + dto.getId();
     }
 
 
@@ -101,13 +99,13 @@ public class ClienteWebController {
     @PostMapping("/{id}/edit")
     public String actualizarCliente(@PathVariable Long id, @ModelAttribute ClienteDTO clienteDTO){
 
-        ClienteDTO dto = restClient.post()
+        ClienteDTO dto = restClient.patch()
                 .uri("/clientes/{id}/edit",id)
                 .body(clienteDTO)
                 .retrieve()
                 .body(clienteDTO.getClass());
 
-        return "redirect:/cliente/" + clienteDTO.getId();
+        return "redirect:/clientes/" + clienteDTO.getId();
     }
 
 
@@ -120,7 +118,7 @@ public class ClienteWebController {
                 .retrieve()
                 .body(ClienteDTO.class);
 
-        return "redirect:/";
+        return "redirect:/clientes/";
     }
 
 

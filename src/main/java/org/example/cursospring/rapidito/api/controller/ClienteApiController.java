@@ -25,12 +25,13 @@ public class ClienteApiController {
     // mostrar todos
     @GetMapping("/")
     public ResponseEntity<List<ClienteDTO>> mostrarClientes(){
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(clienteService.mostrarClientes());
+        List<ClienteDTO> listaClientes = clienteService.mostrarClientes();
+        return ResponseEntity.ok(listaClientes);
     }
 
 
     // Crear - guardar datos
-    @PostMapping("/")
+    @PutMapping("/")
     public ResponseEntity<ClienteDTO> guardarCliente(@RequestBody ClienteDTO clienteDTO){
         clienteDTO = clienteService.crearCliente(clienteDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteDTO);
@@ -45,7 +46,7 @@ public class ClienteApiController {
 
 
     // editar/actualizar
-    @PostMapping("/{id}/edit")
+    @PatchMapping("/{id}/edit")
     public ResponseEntity<ClienteDTO> actualizarCliente(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO){
         clienteDTO = clienteService.actualizarCliente(clienteDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteDTO);
@@ -53,7 +54,7 @@ public class ClienteApiController {
 
 
     // borrar
-    @GetMapping("/{id}/delete")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> eliminarCliente(@PathVariable Long id){
         boolean resultado = clienteService.eliminarCliente(clienteService.mostrarCliente(id));
         return ResponseEntity.ok().build();

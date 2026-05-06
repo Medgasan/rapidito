@@ -71,9 +71,9 @@
                     <td th:text="${#temporals.format(reserva.fechaInicio, 'dd/MM/yyyy')}">Fecha Inicio</td>
                     <td th:text="${#temporals.format(reserva.fechaFin, 'dd/MM/yyyy')}">Fecha Fin</td>
                     <td>
-                        <a th:href="@{/reservas/{id}(id=${reserva.id})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/reservas/{id}/edit(id=${reserva.id})}" class="btn btn-sm btn-warning">Editar</a>
-                        <a th:href="@{/reservas/{id}/delete(id=${reserva.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar esta reserva?')">Eliminar</a>
+                        <a th:href="'/reservas/' + ${reserva.id}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="'/reservas/' + ${reserva.id} + '/edit'" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="'/reservas/' + ${reserva.id} + '/delete'" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar esta reserva?')">Eliminar</a>
                     </td>
                 </tr>
             </tbody>

@@ -35,34 +35,32 @@ public class ReservaWebController {
                 .uri("/reservas/")
                 .retrieve()
                 .body(new ParameterizedTypeReference<List<ReservaDTO>>() {});
-        model.addAttribute("clientes", dtos);
+        model.addAttribute("reservas", dtos);
         return "listaReservas";
     }
-
 
 
     // Crear - obtener datos
     @GetMapping("/new")
     public String nuevoReserva(Model model){
-        model.addAttribute("cliente", new ReservaDTO());
+        model.addAttribute("reserva", new ReservaDTO());
         model.addAttribute("editMode", true);
         return "reserva";
     }
 
 
     // Crear - guardar datos
-    @PostMapping("/{id}")
-    public String guardarReserva(@PathVariable Long id, @ModelAttribute ReservaDTO reservaDTO){
+    @PostMapping("/")
+    public String guardarReserva(@ModelAttribute ReservaDTO reservaDTO){
 
-        ReservaDTO reserva = restClient.post()
-                .uri("/reservas/{id}", id)
+        ReservaDTO dto = restClient.post()
+                .uri("/reservas/")
                 .body(reservaDTO)
                 .retrieve()
                 .body(ReservaDTO.class);
 
-        return "redirect:/reserva/" + reservaDTO.getId();
+        return "redirect:/reservas/" + dto.getId();
     }
-
 
 
     // ver
@@ -72,7 +70,7 @@ public class ReservaWebController {
                 .uri("/reservas/{id}", id)
                 .retrieve()
                 .body(ReservaDTO.class);
-        model.addAttribute("contrato", dto);
+        model.addAttribute("reserva", dto);
         model.addAttribute("editMode", false);
         return "reserva";
     }
@@ -85,7 +83,7 @@ public class ReservaWebController {
                 .uri("/reservas/{id}", id)
                 .retrieve()
                 .body(ReservaDTO.class);
-        model.addAttribute("contrato", dto);
+        model.addAttribute("reserva", dto);
         model.addAttribute("editMode", true);
         return "reserva";
     }
@@ -99,21 +97,19 @@ public class ReservaWebController {
                 .body(reservaDTO)
                 .retrieve()
                 .body(ReservaDTO.class);
-        return "redirect:/reserva/" + reservaDTO.getId();
+        return "redirect:/reservas/" + dto.getId();
     }
 
 
     // borrar
     @GetMapping("/{id}/delete")
-    public String eliminarContrato(Model model, @PathVariable Long id){
+    public String eliminarReserva(Model model, @PathVariable Long id){
 
-        ReservaDTO dto = restClient.delete()
-                .uri("/reservas/{id}/delete")
+        restClient.delete()
+                .uri("/reservas/{id}/delete", id)
                 .retrieve()
                 .body(ReservaDTO.class);
 
-        //boolean resultado = reservaService.eliminarReserva(reservaService.mostrarReserva(id));
-        //model.addAttribute("resultado", resultado);
         return "redirect:/reservas/";
     }
 

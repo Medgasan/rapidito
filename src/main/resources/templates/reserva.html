@@ -51,7 +51,7 @@
     <div class="container mt-4">
         <h1 th:text="${editMode} ? 'Editar Reserva' : 'Nueva Reserva'">Reserva</h1>
         
-        <form th:action="@{/reservas/{id}(id=${reserva.id})}" th:object="${reserva}" method="post">
+        <form th:if="${editMode}" th:action="@{'/reservas/' + reserva.id + '/edit'}" th:object="${reserva}" method="post">
             <div class="form-group">
                 <label for="cliente">Cliente:</label>
                 <select class="form-control" id="cliente" th:field="*{cliente}" required>
@@ -76,7 +76,36 @@
                 <input type="date" class="form-control" id="fechaFin" th:field="*{fechaFin}" required>
             </div>
             
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            <a th:href="@{/reservas/}" class="btn btn-secondary">Cancelar</a>
+        </form>
+        
+        <form th:if="!${editMode}" th:action="@{/reservas/}" th:object="${reserva}" method="post">
+            <div class="form-group">
+                <label for="cliente">Cliente:</label>
+                <select class="form-control" id="cliente" th:field="*{cliente}" required>
+                    <option value="">Seleccione un cliente</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="vehiculo">Vehículo:</label>
+                <select class="form-control" id="vehiculo" th:field="*{vehiculo}" required>
+                    <option value="">Seleccione un vehículo</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaInicio">Fecha de Inicio:</label>
+                <input type="date" class="form-control" id="fechaInicio" th:field="*{fechaInicio}" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fechaFin">Fecha de Fin:</label>
+                <input type="date" class="form-control" id="fechaFin" th:field="*{fechaFin}" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Crear</button>
             <a th:href="@{/reservas/}" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>

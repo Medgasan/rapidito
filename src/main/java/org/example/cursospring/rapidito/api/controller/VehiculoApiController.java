@@ -49,35 +49,35 @@ public class VehiculoApiController {
 
 
     // Crear - guardar datos
-    @PostMapping("/{id}")
+    @PutMapping("/")
     public ResponseEntity<VehiculoDTO> guardarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO){
         return ResponseEntity.ok(vehiculoService.crearVehiculo(vehiculoDTO));
     }
 
 
     // ver
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<VehiculoDTO> mostrarVehiculo(@PathVariable Long id){
         return ResponseEntity.ok(vehiculoService.mostrarVehiculo(id));
     }
 
 
     // editar/actualizar
-    @GetMapping("/id/edit")
+    @GetMapping("/{id}/edit")
     public ResponseEntity<VehiculoDTO> editarVehiculo(@PathVariable Long id){
         return ResponseEntity.ok(vehiculoService.mostrarVehiculo(id));
     }
 
 
     // editar/actualizar
-    @PostMapping("/id/edit")
+    @PatchMapping("/{id}/edit")
     public ResponseEntity<VehiculoDTO> actualizarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO){
         return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
     }
 
 
     // borrar
-    @GetMapping("/{id}/delete")
+    @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> eliminarVehiculo(Model model, @PathVariable Long id){
         boolean deleted = vehiculoService.eliminarVehiculo(vehiculoService.mostrarVehiculo(id));
         return ResponseEntity.ok().build();

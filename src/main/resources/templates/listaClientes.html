@@ -52,10 +52,13 @@
         <h1>Lista de Clientes</h1>
         <a href="/clientes/new" class="btn btn-primary mb-3">Nuevo Cliente</a>
         
-        <table class="table table-striped">
+        <div th:if="${#lists.isEmpty(clientes)}" class="alert alert-warning">
+            No hay clientes disponibles.
+        </div>
+        
+        <table class="table table-striped" th:if="${not #lists.isEmpty(clientes)}">
             <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>Email</th>
@@ -65,15 +68,14 @@
             </thead>
             <tbody>
                 <tr th:each="cliente : ${clientes}">
-                    <td th:text="${cliente.id}">ID</td>
                     <td th:text="${cliente.nombre}">Nombre</td>
                     <td th:text="${cliente.apellido}">Apellido</td>
                     <td th:text="${cliente.email}">Email</td>
                     <td th:text="${cliente.telefono}">Teléfono</td>
                     <td>
-                        <a th:href="@{/clientes/{id}(id=${cliente.id})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/clientes/{id}/edit(id=${cliente.id})}" class="btn btn-sm btn-warning">Editar</a>
-                        <a th:href="@{/clientes/{id}/delete(id=${cliente.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este cliente?')">Eliminar</a>
+                        <a th:href="'/clientes/' + ${cliente.id}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="'/clientes/' + ${cliente.id} + '/edit'" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="'/clientes/' + ${cliente.id} + '/delete'" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este cliente?')">Eliminar</a>
                     </td>
                 </tr>
             </tbody>

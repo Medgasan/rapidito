@@ -63,15 +63,15 @@ public class VehiculoWebController {
 
     // Crear - guardar datos
     @PostMapping("/{id}")
-    public String guardarVehiculo(@PathVariable Long id, @ModelAttribute VehiculoDTO vehiculoDTO){
+    public String guardarVehiculo(@PathVariable long id, @ModelAttribute VehiculoDTO vehiculoDTO){
 
-        VehiculoDTO dto = restClient.post()
-                .uri("/vehiculos/{id}", id)
+        VehiculoDTO dto = restClient.put()
+                .uri("/vehiculos/")
                 .body(vehiculoDTO)
                 .retrieve()
                 .body(VehiculoDTO.class);
 
-        return "redirect:/vehiculo/" + vehiculoDTO.getId();
+        return "redirect:/vehiculos/" + dto.getId();
     }
 
 
@@ -107,14 +107,14 @@ public class VehiculoWebController {
     @PostMapping("/{id}/edit")
     public String actualizarVehiculo(@PathVariable long id, @ModelAttribute VehiculoDTO vehiculoDTO){
 
-        VehiculoDTO dto = restClient.post()
+        VehiculoDTO dto = restClient.patch()
                 .uri("/vehiculos/{id}/edit", id)
                 .body(vehiculoDTO)
                 .retrieve()
                 .body(VehiculoDTO.class);
 
         //vehiculoDTO = vehiculoService.actualizarVehiculo(vehiculoDTO);
-        return "redirect:/vehiculo/" + vehiculoDTO.getId();
+        return "redirect:/vehiculos/" + dto.getId();
     }
 
 
@@ -129,7 +129,7 @@ public class VehiculoWebController {
 
         //boolean resultado = vehiculoService.eliminarVehiculo(vehiculoService.mostrarVehiculo(id));
         //model.addAttribute("resultado", resultado);
-        return "redirect:/";
+        return "redirect:/vehiculos/";
     }
 
 }

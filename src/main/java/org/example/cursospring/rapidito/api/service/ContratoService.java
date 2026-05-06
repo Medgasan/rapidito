@@ -25,7 +25,7 @@ public class ContratoService implements IContratoService {
     @Override
     public List<ContratoDTO> mostrarContratos(){
         List<Contrato> contratos = this.contratoRepository.findAll();
-        return contratoMapper.toContratosDTOList(contratos);
+        return contratoMapper.toContratoDTOList(contratos);
     }
 
 

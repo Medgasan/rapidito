@@ -83,9 +83,9 @@
                     <td th:text="${vehiculo.tipoCombustible}">Combustible</td>
                     <td th:text="${vehiculo.precioDia}">Precio/Día</td>
                     <td>
-                        <a th:href="@{/vehiculos/{id}(id=${vehiculo.id})}" class="btn btn-sm btn-info">Ver</a>
-                        <a th:href="@{/vehiculos/{id}/edit(id=${vehiculo.id})}" class="btn btn-sm btn-warning">Editar</a>
-                        <a th:href="@{/vehiculos/{id}/delete(id=${vehiculo.id})}" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este vehículo?')">Eliminar</a>
+                        <a th:href="'/vehiculos/' + ${vehiculo.id}" class="btn btn-sm btn-info">Ver</a>
+                        <a th:href="'/vehiculos/' + ${vehiculo.id} + '/edit'" class="btn btn-sm btn-warning">Editar</a>
+                        <a th:href="'/vehiculos/' + ${vehiculo.id} + '/delete'" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar este vehículo?')">Eliminar</a>
                     </td>
                 </tr>
             </tbody>
