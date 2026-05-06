@@ -36,14 +36,14 @@ public class ContratoApiController {
 
     // Crear - guardar datos
     @PostMapping("/{id}")
-    public ResponseEntity<ContratoDTO> guardarContrato(@ModelAttribute ContratoDTO contratoDTO){
+    public ResponseEntity<ContratoDTO> guardarContrato(@RequestBody ContratoDTO contratoDTO){
         contratoDTO = contratoService.crearContrato(contratoDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(contratoDTO);
     }
 
 
     // ver
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<ContratoDTO> mostrarContrato(Model model, @PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(contratoService.mostrarContrato(id));
     }
@@ -57,8 +57,8 @@ public class ContratoApiController {
 
 
     // editar/actualizar
-    @PostMapping("/id/edit")
-    public ResponseEntity<ContratoDTO> actualizarContrato(@ModelAttribute ContratoDTO contratoDTO){
+    @PostMapping("/{id}/edit")
+    public ResponseEntity<ContratoDTO> actualizarContrato(@RequestBody ContratoDTO contratoDTO){
         return ResponseEntity.status(HttpStatus.OK).body(contratoService.actualizarContrato(contratoDTO));
     }
 

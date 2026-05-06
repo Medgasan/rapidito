@@ -1,7 +1,9 @@
 package org.example.cursospring.rapidito.web.controller;
 
 
+import org.example.cursospring.rapidito.api.dto.ClienteDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
+import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,7 +73,20 @@ public class ContratoWebController {
                 .retrieve()
                 .body(ContratoDTO.class);
 
+        List<ClienteDTO> clientes = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+
+
+        List<VehiculoDTO> vehiculos = restClient.get()
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
+
         model.addAttribute("contrato", dto);
+        model.addAttribute("clientes", clientes);
+        model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("editMode", false);
         return "contrato";
     }
@@ -86,8 +101,22 @@ public class ContratoWebController {
                 .retrieve()
                 .body(ContratoDTO.class);
 
+        List<ClienteDTO> clientes = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+
+
+        List<VehiculoDTO> vehiculos = restClient.get()
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
+
+        model.addAttribute("clientes", clientes);
+        model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("contrato", dto);
-        model.addAttribute("editMode", true);
+        model.addAttribute("editMode", false);
+
         return "contrato";
     }
 

@@ -1,7 +1,9 @@
 package org.example.cursospring.rapidito.web.controller;
 
 
+import org.example.cursospring.rapidito.api.dto.ClienteDTO;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
+import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -70,6 +72,17 @@ public class ReservaWebController {
                 .uri("/reservas/{id}", id)
                 .retrieve()
                 .body(ReservaDTO.class);
+        List<ClienteDTO> clientes = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+        List<VehiculoDTO> vehiculos = restClient.get()
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
+
+        model.addAttribute("clientes", clientes);
+        model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("reserva", dto);
         model.addAttribute("editMode", false);
         return "reserva";
@@ -83,6 +96,17 @@ public class ReservaWebController {
                 .uri("/reservas/{id}", id)
                 .retrieve()
                 .body(ReservaDTO.class);
+        List<ClienteDTO> clientes = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+        List<VehiculoDTO> vehiculos = restClient.get()
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
+
+        model.addAttribute("clientes", clientes);
+        model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("reserva", dto);
         model.addAttribute("editMode", true);
         return "reserva";

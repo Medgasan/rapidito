@@ -39,13 +39,25 @@ public class VehiculoWebController {
 
 
     // mostrar por marca
-    @GetMapping("/{marca}/list")
-    public String mostrarVehiculosPorMarca(@PathVariable String marca, Model model){
-        List<VehiculoDTO> dtos = restClient.get()
-                .uri("/vehiculos/{marca}/list/", marca)
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<VehiculoDTO>>(){});
-        model.addAttribute("vehiculos", dtos);
+    @GetMapping("/list")
+    public String mostrarVehiculosPorMarca(@RequestParam(name = "marca", required = false) String marca, Model model){
+
+        List<VehiculoDTO> dtos;
+
+        if (marca.isEmpty()){
+            dtos = restClient.get()
+                    .uri("/vehiculos/")
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<List<VehiculoDTO>>(){});
+
+        } else {
+            dtos = restClient.get()
+                    .uri("/vehiculos/{marca}/list", marca)
+                    .retrieve()
+                    .body(new ParameterizedTypeReference<List<VehiculoDTO>>(){});
+        }
+
+
         model.addAttribute("marca", marca);
         model.addAttribute("vehiculos", dtos);
         return "listaVehiculos";
@@ -62,8 +74,8 @@ public class VehiculoWebController {
 
 
     // Crear - guardar datos
-    @PostMapping("/{id}")
-    public String guardarVehiculo(@PathVariable long id, @ModelAttribute VehiculoDTO vehiculoDTO){
+    @PostMapping("/")
+    public String guardarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO){
 
         VehiculoDTO dto = restClient.put()
                 .uri("/vehiculos/")
@@ -71,7 +83,7 @@ public class VehiculoWebController {
                 .retrieve()
                 .body(VehiculoDTO.class);
 
-        return "redirect:/vehiculos/" + dto.getId();
+        return "redirect:/vehiculos/" ;
     }
 
 

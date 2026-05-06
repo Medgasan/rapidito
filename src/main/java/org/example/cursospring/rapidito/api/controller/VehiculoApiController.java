@@ -3,6 +3,7 @@ package org.example.cursospring.rapidito.api.controller;
 
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.service.VehiculoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,19 +40,11 @@ public class VehiculoApiController {
     }
 
 
-//    // Crear - obtener datos
-//    @GetMapping("/new")
-//    public ResponseEntity nuevoVehiculo(Model model){
-//        model.addAttribute("vehiculo", new VehiculoDTO());
-//        model.addAttribute("editMode", true);
-//        return "vehiculo";
-//    }
-
-
     // Crear - guardar datos
     @PutMapping("/")
-    public ResponseEntity<VehiculoDTO> guardarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO){
-        return ResponseEntity.ok(vehiculoService.crearVehiculo(vehiculoDTO));
+    public ResponseEntity<VehiculoDTO> guardarVehiculo(@RequestBody VehiculoDTO vehiculoDTO){
+        vehiculoDTO = vehiculoService.crearVehiculo(vehiculoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoDTO);
     }
 
 
@@ -71,8 +64,8 @@ public class VehiculoApiController {
 
     // editar/actualizar
     @PatchMapping("/{id}/edit")
-    public ResponseEntity<VehiculoDTO> actualizarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO){
-        return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
+    public ResponseEntity<VehiculoDTO> actualizarVehiculo(@RequestBody VehiculoDTO vehiculoDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoDTO);
     }
 
 

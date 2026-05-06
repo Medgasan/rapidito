@@ -15,8 +15,6 @@ public interface VehiculoMapper {
     @Mapping(target = "contratos", ignore = true)
     VehiculoDTO toVehiculoDTO(Vehiculo vehiculo);
 
-    @Mapping(target = "reservas", ignore = true)
-    @Mapping(target = "contratos", ignore = true)
     List<VehiculoDTO> toVehiculoDTOList(List<Vehiculo> vehiculos);
     List<VehiculoDTO> toVehiculosList(List<Vehiculo> vehiculos);
 }

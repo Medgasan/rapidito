@@ -12,10 +12,18 @@ import java.util.List;
 public interface ContratoMapper {
 
     Contrato toContrato(ContratoDTO contratoDTO);
+    List<Contrato> toContratoList(List<ContratoDTO> contratos);
 
+    @Mapping(target = "vehiculo.contratos",  ignore = true)
+    @Mapping(target = "vehiculo.reservas",  ignore = true)
+    @Mapping(target = "cliente.reservas",  ignore = true)
+    @Mapping(target = "cliente.contratos",  ignore = true)
     ContratoDTO toContratoDTO(Contrato contrato);
 
+    @Mapping(target = "vehiculo.contratos",  ignore = true)
+    @Mapping(target = "vehiculo.reservas",  ignore = true)
+    @Mapping(target = "cliente.reservas",  ignore = true)
+    @Mapping(target = "cliente.contratos",  ignore = true)
     List<ContratoDTO> toContratoDTOList(List<Contrato> contratos);
 
-    List<Contrato> toContratoList(List<ContratoDTO> contratos);
 }

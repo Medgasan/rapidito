@@ -51,7 +51,10 @@
     <div class="container mt-4">
         <h1 th:text="${editMode} ? 'Editar Vehículo' : 'Nuevo Vehículo'">Vehículo</h1>
         
-        <form th:action="@{/vehiculos/{id}(id=${vehiculo.id})}"  th:object="${vehiculo}" method="post">
+        <form th:action="@{/vehiculos/}"  th:object="${vehiculo}" method="post">
+
+            <input type="hidden" th:field="*{id}" />
+
             <div class="form-group">
                 <label for="numeroBastidor">Número de Bastidor:</label>
                 <input type="text" class="form-control" id="numeroBastidor" th:field="*{numeroBastidor}" required>

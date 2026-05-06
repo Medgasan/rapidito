@@ -37,28 +37,28 @@ public class ReservaApiController {
 
     // Crear - guardar datos
     @PostMapping("/{id}")
-    public ResponseEntity<ReservaDTO> guardarReserva(@ModelAttribute ReservaDTO reservaDTO){
+    public ResponseEntity<ReservaDTO> guardarReserva(@RequestBody ReservaDTO reservaDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.crearReserva(reservaDTO));
     }
 
 
     // ver
-    @GetMapping("/id")
+    @GetMapping("/{id}")
     public ResponseEntity<ReservaDTO> mostrarReserva(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(reservaService.mostrarReserva(id));
     }
 
 
     // editar/actualizar
-    @GetMapping("/id/edit")
+    @GetMapping("/{id}/edit")
     public ResponseEntity<ReservaDTO> editarReserva(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(reservaService.mostrarReserva(id));
     }
 
 
     // editar/actualizar
-    @PostMapping("/id/edit")
-    public ResponseEntity<ReservaDTO> actualizarReserva(@ModelAttribute ReservaDTO reservaDTO){
+    @PostMapping("/{id}/edit")
+    public ResponseEntity<ReservaDTO> actualizarReserva(@RequestBody ReservaDTO reservaDTO){
         return ResponseEntity.status(HttpStatus.OK).body(reservaService.actualizarReserva(reservaDTO));
     }
 

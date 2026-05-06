@@ -53,7 +53,7 @@
         <a href="/vehiculos/new" class="btn btn-primary mb-3">Nuevo Vehículo</a>
         
         <div class="mb-3">
-            <form th:action="@{/vehiculos/{marca}/list}" method="get">
+            <form th:action="@{/vehiculos/list}" method="get">
                 <div class="input-group">
                     <input type="text" class="form-control" name="marca" placeholder="Filtrar por marca" th:value="${param.marca}">
                     <button type="submit" class="btn btn-secondary">Filtrar</button>
