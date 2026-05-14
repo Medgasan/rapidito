@@ -13,7 +13,6 @@ public class ClienteService implements IClienteService {
 
     private final ClienteRepository clienteRepository;
     private final ClienteMapper clienteMapper;
-    //private final ClienteMapper clienteMapper = Mappers.getMapper(ClienteMapper.class);
 
 
     public ClienteService(ClienteRepository clienteRepository, ClienteMapper clienteMapper) {

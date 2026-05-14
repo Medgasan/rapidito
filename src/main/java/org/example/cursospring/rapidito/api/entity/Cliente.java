@@ -31,5 +31,4 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     private List<Contrato> contratos;
 
-
 }

@@ -51,7 +51,7 @@
     <div class="container mt-4">
         <h1 th:text="${editMode} ? 'Editar Reserva' : 'Nueva Reserva'">Reserva</h1>
 
-        <form th:action="@{'/reservas/' + reserva.id + '/edit'}" th:object="${reserva}" method="post">
+        <form th:action="@{'/reservas/'}" th:object="${reserva}" method="post">
 
             <input type="hidden" th:field="*{id}" />
 

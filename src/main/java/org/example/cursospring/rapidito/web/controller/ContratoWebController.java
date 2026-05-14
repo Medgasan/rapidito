@@ -3,6 +3,7 @@ package org.example.cursospring.rapidito.web.controller;
 
 import org.example.cursospring.rapidito.api.dto.ClienteDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
+import org.example.cursospring.rapidito.api.dto.ReservaDTO;
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
@@ -44,7 +45,30 @@ public class ContratoWebController {
     // Crear - obtener datos
     @GetMapping("/new")
     public String nuevoContrato(Model model){
+        getCommon(model);
         model.addAttribute("contrato", new ContratoDTO());
+        model.addAttribute("editMode", true);
+        return "contrato";
+    }
+
+
+    // Crear - obtener datos
+    @GetMapping("/{id}/new")
+    public String nuevoContratoDesdeReserva(@PathVariable long id, Model model){
+
+        ReservaDTO reserva = restClient.get()
+                .uri("/reservas/{id}",id)
+                .retrieve()
+                .body(ReservaDTO.class);
+
+        ContratoDTO contratoDTO = new ContratoDTO();
+        contratoDTO.setCliente(reserva.getCliente());
+        contratoDTO.setVehiculo(reserva.getVehiculo());
+        contratoDTO.setFechaInicio(reserva.getFechaInicio());
+        contratoDTO.setFechaFin(reserva.getFechaFin());
+
+        getCommon(model);
+        model.addAttribute("contrato", contratoDTO);
         model.addAttribute("editMode", true);
         return "contrato";
     }
@@ -54,13 +78,13 @@ public class ContratoWebController {
     @PostMapping("/")
     public String guardarContrato(@ModelAttribute ContratoDTO contratoDTO){
 
-        ContratoDTO dto = restClient.post()
+        ContratoDTO dto = restClient.put()
                 .uri("/contratos/")
                 .body(contratoDTO)
                 .retrieve()
                 .body(ContratoDTO.class);
 
-        return "redirect:/contratos/" + dto.getId();
+        return "redirect:/contratos/";
     }
 
 
@@ -73,20 +97,8 @@ public class ContratoWebController {
                 .retrieve()
                 .body(ContratoDTO.class);
 
-        List<ClienteDTO> clientes = restClient.get()
-                .uri("/clientes/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
-
-
-        List<VehiculoDTO> vehiculos = restClient.get()
-                .uri("/vehiculos/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
-
+        getCommon(model);
         model.addAttribute("contrato", dto);
-        model.addAttribute("clientes", clientes);
-        model.addAttribute("vehiculos", vehiculos);
         model.addAttribute("editMode", false);
         return "contrato";
     }
@@ -101,19 +113,7 @@ public class ContratoWebController {
                 .retrieve()
                 .body(ContratoDTO.class);
 
-        List<ClienteDTO> clientes = restClient.get()
-                .uri("/clientes/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
-
-
-        List<VehiculoDTO> vehiculos = restClient.get()
-                .uri("/vehiculos/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
-
-        model.addAttribute("clientes", clientes);
-        model.addAttribute("vehiculos", vehiculos);
+        getCommon(model);
         model.addAttribute("contrato", dto);
         model.addAttribute("editMode", false);
 
@@ -124,7 +124,7 @@ public class ContratoWebController {
     // editar/actualizar
     @PostMapping("/{id}/edit")
     public String actualizarContrato(@PathVariable Long id, @ModelAttribute ContratoDTO contratoDTO){
-        ContratoDTO dto = restClient.post()
+        ContratoDTO dto = restClient.patch()
                 .uri("/contratos/{id}/edit", id)
                 .body(contratoDTO)
                 .retrieve()
@@ -143,6 +143,21 @@ public class ContratoWebController {
                 .body(ContratoDTO.class);
 
         return "redirect:/contratos/";
+    }
+
+
+    private void getCommon(Model model){
+        List<ClienteDTO> clientes = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+
+        List<VehiculoDTO> vehiculos = restClient.get()
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
+        model.addAttribute("clientes", clientes);
+        model.addAttribute("vehiculos", vehiculos);
     }
 
 }

@@ -20,7 +20,6 @@ public class VehiculoApiController {
         this.vehiculoService = vehiculoService;
     }
 
-
     @GetMapping("")
     public String main(){
         return "redirect:/vehiculos/";
@@ -32,21 +31,17 @@ public class VehiculoApiController {
         return ResponseEntity.ok(vehiculoService.mostrarVehiculos());
     }
 
-
     // mostrar por marca
     @GetMapping("/{marca}/list")
     public ResponseEntity<List<VehiculoDTO>> mostrarVehiculosPorMarca(@PathVariable String marca, Model model){
         return ResponseEntity.ok(vehiculoService.mostrarVehiculosPorMarca(marca));
     }
 
-
     // Crear - guardar datos
     @PutMapping("/")
     public ResponseEntity<VehiculoDTO> guardarVehiculo(@RequestBody VehiculoDTO vehiculoDTO){
-        vehiculoDTO = vehiculoService.crearVehiculo(vehiculoDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoService.crearVehiculo(vehiculoDTO));
     }
-
 
     // ver
     @GetMapping("/{id}")
@@ -54,13 +49,11 @@ public class VehiculoApiController {
         return ResponseEntity.ok(vehiculoService.mostrarVehiculo(id));
     }
 
-
     // editar/actualizar
     @GetMapping("/{id}/edit")
     public ResponseEntity<VehiculoDTO> editarVehiculo(@PathVariable Long id){
         return ResponseEntity.ok(vehiculoService.mostrarVehiculo(id));
     }
-
 
     // editar/actualizar
     @PatchMapping("/{id}/edit")
@@ -68,12 +61,10 @@ public class VehiculoApiController {
         return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoDTO);
     }
 
-
     // borrar
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> eliminarVehiculo(Model model, @PathVariable Long id){
         boolean deleted = vehiculoService.eliminarVehiculo(vehiculoService.mostrarVehiculo(id));
         return ResponseEntity.ok().build();
     }
-
 }

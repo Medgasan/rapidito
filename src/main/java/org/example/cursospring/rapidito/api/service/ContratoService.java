@@ -29,8 +29,6 @@ public class ContratoService implements IContratoService {
     }
 
 
-
-
     @Override
     public ContratoDTO crearContrato(ContratoDTO contratoDTO) {
         Contrato contrato = contratoMapper.toContrato(contratoDTO);

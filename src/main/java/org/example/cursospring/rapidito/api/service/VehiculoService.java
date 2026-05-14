@@ -20,20 +20,17 @@ public class VehiculoService implements IVehiculoService {
         this.vehiculoMapper = vehiculoMapper;
     }
 
-    
     @Override
     public List<VehiculoDTO> mostrarVehiculos() {
         List<Vehiculo> vehiculoList = vehiculoRepository.findAll();
         return vehiculoMapper.toVehiculoDTOList(vehiculoList);
     }
 
-
     @Override
     public List<VehiculoDTO> mostrarVehiculosPorMarca(@PathVariable String marca) {
         List<Vehiculo> vehiculos = vehiculoRepository.findVehiculoByMarca(marca);
         return vehiculoMapper.toVehiculoDTOList(vehiculos);
     }
-
 
     @Override
     public VehiculoDTO crearVehiculo(VehiculoDTO vehiculoDTO) {

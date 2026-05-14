@@ -45,6 +45,7 @@ public class ReservaWebController {
     // Crear - obtener datos
     @GetMapping("/new")
     public String nuevoReserva(Model model){
+        getCommon(model);
         model.addAttribute("reserva", new ReservaDTO());
         model.addAttribute("editMode", true);
         return "reserva";
@@ -55,7 +56,7 @@ public class ReservaWebController {
     @PostMapping("/")
     public String guardarReserva(@ModelAttribute ReservaDTO reservaDTO){
 
-        ReservaDTO dto = restClient.post()
+        ReservaDTO dto = restClient.put()
                 .uri("/reservas/")
                 .body(reservaDTO)
                 .retrieve()
@@ -72,17 +73,8 @@ public class ReservaWebController {
                 .uri("/reservas/{id}", id)
                 .retrieve()
                 .body(ReservaDTO.class);
-        List<ClienteDTO> clientes = restClient.get()
-                .uri("/clientes/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
-        List<VehiculoDTO> vehiculos = restClient.get()
-                .uri("/vehiculos/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
 
-        model.addAttribute("clientes", clientes);
-        model.addAttribute("vehiculos", vehiculos);
+        getCommon(model);
         model.addAttribute("reserva", dto);
         model.addAttribute("editMode", false);
         return "reserva";
@@ -96,17 +88,9 @@ public class ReservaWebController {
                 .uri("/reservas/{id}", id)
                 .retrieve()
                 .body(ReservaDTO.class);
-        List<ClienteDTO> clientes = restClient.get()
-                .uri("/clientes/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
-        List<VehiculoDTO> vehiculos = restClient.get()
-                .uri("/vehiculos/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
 
-        model.addAttribute("clientes", clientes);
-        model.addAttribute("vehiculos", vehiculos);
+        getCommon(model);
+
         model.addAttribute("reserva", dto);
         model.addAttribute("editMode", true);
         return "reserva";
@@ -116,12 +100,12 @@ public class ReservaWebController {
     // editar/actualizar
     @PostMapping("/{id}/edit")
     public String actualizarReserva(@PathVariable Long id, @ModelAttribute ReservaDTO reservaDTO){
-        ReservaDTO dto = restClient.post()
+        ReservaDTO dto = restClient.patch()
                 .uri("/reservas/{id}/edit", id)
                 .body(reservaDTO)
                 .retrieve()
                 .body(ReservaDTO.class);
-        return "redirect:/reservas/" + dto.getId();
+        return "redirect:/reservas/";
     }
 
 
@@ -137,6 +121,20 @@ public class ReservaWebController {
         return "redirect:/reservas/";
     }
 
+
+    private void getCommon(Model model){
+        List<ClienteDTO> clientes = restClient.get()
+                .uri("/clientes/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+
+        List<VehiculoDTO> vehiculos = restClient.get()
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
+        model.addAttribute("clientes", clientes);
+        model.addAttribute("vehiculos", vehiculos);
+    }
 
 
 }

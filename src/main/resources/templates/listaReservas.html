@@ -74,6 +74,7 @@
                         <a th:href="'/reservas/' + ${reserva.id}" class="btn btn-sm btn-info">Ver</a>
                         <a th:href="'/reservas/' + ${reserva.id} + '/edit'" class="btn btn-sm btn-warning">Editar</a>
                         <a th:href="'/reservas/' + ${reserva.id} + '/delete'" class="btn btn-sm btn-danger" onclick="return confirm('¿Está seguro de eliminar esta reserva?')">Eliminar</a>
+                        <a th:href="@{/contratos/{reservaId}/new(reservaId=${reserva.id})}" class="btn btn-success btn-sm"> Pasar a Contrato </a>
                     </td>
                 </tr>
             </tbody>

@@ -19,9 +19,5 @@ public interface ReservaMapper {
 
     List<Reserva> toReservasList(List<ReservaDTO> reservaDTOS);
 
-//    @Mapping(target = "vehiculo.reservas", ignore = true)
-//    @Mapping(target = "vehiculo.contratos", ignore = true)
-//    @Mapping(target = "cliente.reservas", ignore = true)
-//    @Mapping(target = "cliente.contratos", ignore = true)
     Reserva toReserva(ReservaDTO reservaDTO);
 }

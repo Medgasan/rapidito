@@ -9,6 +9,5 @@ import java.util.List;
 
 @Repository
 public interface ReservaRepository extends JpaRepository<Reserva,Long> {
-    
-    List<Reserva> findByFechaInicioBetweenOrFechaFinBetween(LocalDate inicioMes, LocalDate finMes, LocalDate inicioMes1, LocalDate finMes1);
+
 }
