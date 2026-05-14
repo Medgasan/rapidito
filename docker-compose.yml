@@ -28,6 +28,7 @@ services:
       SPRING_DATASOURCE_USERNAME: rapidito
       SPRING_DATASOURCE_PASSWORD: rapidito123
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      APP_API_BASE_URL: http://localhost:8080/api
     depends_on:
       db:
         condition: service_healthy
