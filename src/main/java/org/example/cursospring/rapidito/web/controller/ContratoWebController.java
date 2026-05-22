@@ -1,16 +1,15 @@
 package org.example.cursospring.rapidito.web.controller;
 
-
 import org.example.cursospring.rapidito.api.dto.ClienteDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
-
 import java.util.List;
 
 @Controller
@@ -19,14 +18,12 @@ public class ContratoWebController {
 
     private final RestClient restClient;
 
-
     public ContratoWebController(RestClient restClient) {
         this.restClient = restClient;
     }
 
-
     @GetMapping("")
-    public String main(){
+    public String main() {
         return "redirect:/contratos/";
     }
 
@@ -36,15 +33,13 @@ public class ContratoWebController {
         List<ContratoDTO> dtos = restClient.get()
                 .uri("/contratos/")
                 .retrieve()
-                .body(new ParameterizedTypeReference<List<ContratoDTO>>() {});
+                .body(new ParameterizedTypeReference<>() {});
         model.addAttribute("contratos", dtos);
         return "listaContratos";
     }
 
-
-    // Crear - obtener datos
     @GetMapping("/new")
-    public String nuevoContrato(Model model){
+    public String nuevoContrato(Model model) {
         getCommon(model);
         model.addAttribute("contrato", new ContratoDTO());
         model.addAttribute("editMode", true);
@@ -52,80 +47,49 @@ public class ContratoWebController {
     }
 
 
-    // Crear - obtener datos
+    @Transactional
     @GetMapping("/{id}/new")
-    public String nuevoContratoDesdeReserva(@PathVariable long id, Model model){
+    public String nuevoContratoDesdeReserva(@PathVariable long id, Model model) {
+        ReservaDTO contrato = restClient.get().uri("/desde-reserva/{id}", id).retrieve().body(ReservaDTO.class);
+        return "contrato";
+    }
 
-        ReservaDTO reserva = restClient.get()
-                .uri("/reservas/{id}",id)
+
+    @PostMapping("/")
+    public String guardarContrato(@ModelAttribute ContratoDTO contratoDTO) {
+        ContratoDTO dto = restClient.post()
+                .uri("/contratos/")
+                .body(contratoDTO)
                 .retrieve()
-                .body(ReservaDTO.class);
+                .body(ContratoDTO.class);
+        return "redirect:/contratos/";
+    }
 
-        ContratoDTO contratoDTO = new ContratoDTO();
-        contratoDTO.setCliente(reserva.getCliente());
-        contratoDTO.setVehiculo(reserva.getVehiculo());
-        contratoDTO.setFechaInicio(reserva.getFechaInicio());
-        contratoDTO.setFechaFin(reserva.getFechaFin());
 
+    @GetMapping("/{id}")
+    public String mostrarContrato(Model model, @PathVariable Long id) {
+        ContratoDTO dto = restClient.get().uri("/contratos/{id}", id).retrieve().body(ContratoDTO.class);
         getCommon(model);
-        model.addAttribute("contrato", contratoDTO);
+        model.addAttribute("contrato", dto);
+        model.addAttribute("editMode", false);
+        return "contrato";
+    }
+
+
+    @GetMapping("/{id}/edit")
+    public String editarContrato(Model model, @PathVariable Long id) {
+        ContratoDTO dto = restClient.get().uri("/contratos/{id}", id).retrieve().body(ContratoDTO.class);
+        getCommon(model);
+        model.addAttribute("contrato", dto);
         model.addAttribute("editMode", true);
         return "contrato";
     }
 
 
-    // Crear - guardar datos
-    @PostMapping("/")
-    public String guardarContrato(@ModelAttribute ContratoDTO contratoDTO){
-
-        ContratoDTO dto = restClient.put()
-                .uri("/contratos/")
-                .body(contratoDTO)
-                .retrieve()
-                .body(ContratoDTO.class);
-
-        return "redirect:/contratos/";
-    }
-
-
-    // ver
-    @GetMapping("/{id}")
-    public String mostrarContrato(Model model, @PathVariable Long id){
-
-        ContratoDTO dto = restClient.get()
-                .uri("/contratos/{id}", id)
-                .retrieve()
-                .body(ContratoDTO.class);
-
-        getCommon(model);
-        model.addAttribute("contrato", dto);
-        model.addAttribute("editMode", false);
-        return "contrato";
-    }
-
-
-    // editar/actualizar
-    @GetMapping("/{id}/edit")
-    public String editarContrato(Model model, @PathVariable Long id){
-
-        ContratoDTO dto = restClient.get()
-                .uri("/contratos/{id}", id)
-                .retrieve()
-                .body(ContratoDTO.class);
-
-        getCommon(model);
-        model.addAttribute("contrato", dto);
-        model.addAttribute("editMode", false);
-
-        return "contrato";
-    }
-
-
-    // editar/actualizar
     @PostMapping("/{id}/edit")
-    public String actualizarContrato(@PathVariable Long id, @ModelAttribute ContratoDTO contratoDTO){
+    public String actualizarContrato(@PathVariable Long id, @ModelAttribute ContratoDTO contratoDTO) {
         ContratoDTO dto = restClient.patch()
-                .uri("/contratos/{id}/edit", id)
+                .uri("/contratos/{id}", id)
                 .body(contratoDTO)
                 .retrieve()
                 .body(ContratoDTO.class);
@@ -133,31 +97,25 @@ public class ContratoWebController {
     }
 
 
-    // borrar
     @GetMapping("/{id}/delete")
-    public String eliminarContrato(Model model, @PathVariable Long id){
-
-        restClient.delete()
-                .uri("/contratos/{id}/delete", id)
-                .retrieve()
-                .body(ContratoDTO.class);
-
+    public String eliminarContrato(@PathVariable Long id) {
+        restClient.delete().uri("/contratos/{id}", id).retrieve().toBodilessEntity();
         return "redirect:/contratos/";
     }
 
 
-    private void getCommon(Model model){
-        List<ClienteDTO> clientes = restClient.get()
-                .uri("/clientes/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
-
-        List<VehiculoDTO> vehiculos = restClient.get()
-                .uri("/vehiculos/")
-                .retrieve()
-                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {});
-        model.addAttribute("clientes", clientes);
-        model.addAttribute("vehiculos", vehiculos);
+    @GetMapping("contratos/{id}/cerrar")
+    public String cerrarContrato(@PathVariable Long id) {
+        restClient.patch().uri("/contratos/{id}/cerrar", id).retrieve().toBodilessEntity();
+        return "redirect:/contratos/";
     }
 
+
+    // Metodo para cargar datos comunes a varias vistas
+    private void getCommon(Model model) {
+        model.addAttribute("clientes", restClient.get().uri("/clientes/").retrieve()
+                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {}));
+        model.addAttribute("vehiculos", restClient.get().uri("/vehiculos/").retrieve()
+                .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {}));
+    }
 }

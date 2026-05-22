@@ -12,4 +12,5 @@ public interface IReservaService {
     ReservaDTO actualizarReserva(ReservaDTO reservaDTO);
     boolean eliminarReserva(ReservaDTO reservaDTO);
     List<ReservaDTO> mostrarReservas();
+    ReservaDTO cancelarReserva(Long id);
 }

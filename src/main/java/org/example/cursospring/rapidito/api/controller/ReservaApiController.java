@@ -1,57 +1,63 @@
 package org.example.cursospring.rapidito.api.controller;
 
-
+import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
-import org.example.cursospring.rapidito.api.service.ReservaService;
+import org.example.cursospring.rapidito.api.entity.Reserva;
+import org.example.cursospring.rapidito.api.service.IReservaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservas")
 public class ReservaApiController {
 
-    private final ReservaService reservaService;
+    private final IReservaService reservaService;
 
-    public ReservaApiController(ReservaService reservaService) {
+    public ReservaApiController(IReservaService reservaService) {
         this.reservaService = reservaService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ReservaDTO>> mostrarReservas(){
-        return ResponseEntity.status(HttpStatus.OK).body(reservaService.mostrarReservas());
+    public ResponseEntity<List<ReservaDTO>> mostrarReservas() {
+        return ResponseEntity.ok(reservaService.mostrarReservas());
     }
 
-    // Crear - guardar datos
-    @PutMapping("/")
-    public ResponseEntity<ReservaDTO> guardarReserva(@RequestBody ReservaDTO reservaDTO){
+    @PostMapping("/")
+    public ResponseEntity<ReservaDTO> guardarReserva(@Valid @RequestBody ReservaDTO reservaDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(reservaService.crearReserva(reservaDTO));
     }
 
-    // ver
     @GetMapping("/{id}")
-    public ResponseEntity<ReservaDTO> mostrarReserva(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(reservaService.mostrarReserva(id));
+    public ResponseEntity<ReservaDTO> mostrarReserva(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.mostrarReserva(id));
     }
 
-    // editar/actualizar
-    @GetMapping("/{id}/edit")
-    public ResponseEntity<ReservaDTO> editarReserva(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(reservaService.mostrarReserva(id));
+    @PatchMapping("/{id}")
+    public ResponseEntity<ReservaDTO> actualizarReserva(@PathVariable Long id,
+                                                        @Valid @RequestBody ReservaDTO reservaDTO) {
+        reservaDTO.setId(id);
+        return ResponseEntity.ok(reservaService.actualizarReserva(reservaDTO));
     }
 
-    // editar/actualizar
-    @PatchMapping("/{id}/edit")
-    public ResponseEntity<ReservaDTO> actualizarReserva(@RequestBody ReservaDTO reservaDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(reservaService.actualizarReserva(reservaDTO));
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarReserva(@PathVariable Long id) {
+        reservaService.eliminarReserva(reservaService.mostrarReserva(id));
+        return ResponseEntity.noContent().build();
     }
 
-    // borrar
-    @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> eliminarReserva(@PathVariable Long id){
-        boolean deleted = reservaService.eliminarReserva(reservaService.mostrarReserva(id));
-        return ResponseEntity.ok().build();
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<ReservaDTO> actualizarEstadoReserva(@PathVariable Long id, @RequestParam String estado) {
+        ReservaDTO reservaDTO = reservaService.mostrarReserva(id);
+        reservaDTO.setEstado(Reserva.EstadoReserva.valueOf(estado));
+        return ResponseEntity.ok(reservaService.actualizarReserva(reservaDTO));
     }
+
+
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<ReservaDTO> cancelarReserva(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.cancelarReserva(id));
+    }
+
 }

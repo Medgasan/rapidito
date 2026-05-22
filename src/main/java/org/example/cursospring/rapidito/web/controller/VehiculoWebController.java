@@ -1,13 +1,11 @@
 package org.example.cursospring.rapidito.web.controller;
 
-
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
-
 import java.util.List;
 
 @Controller
@@ -20,77 +18,55 @@ public class VehiculoWebController {
         this.restClient = restClient;
     }
 
-
     @GetMapping("")
-    public String main(){
+    public String main() {
         return "redirect:/vehiculos/";
     }
 
-    // mostrar todos
     @GetMapping("/")
-    public String mostrarVehiculos(Model model){
+    public String mostrarVehiculos(Model model) {
         List<VehiculoDTO> dtos = restClient.get()
-            .uri("/vehiculos/")
-            .retrieve()
-            .body(new ParameterizedTypeReference<List<VehiculoDTO>>(){});
+                .uri("/vehiculos/")
+                .retrieve()
+                .body(new ParameterizedTypeReference<>() {});
         model.addAttribute("vehiculos", dtos);
         return "listaVehiculos";
     }
 
-
-    // mostrar por marca
     @GetMapping("/list")
-    public String mostrarVehiculosPorMarca(@RequestParam(name = "marca", required = false) String marca, Model model){
-
+    public String mostrarVehiculosPorMarca(@RequestParam(required = false) String marca, Model model) {
         List<VehiculoDTO> dtos;
-
-        if (marca.isEmpty()){
-            dtos = restClient.get()
-                    .uri("/vehiculos/")
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<List<VehiculoDTO>>(){});
-
+        if (marca == null || marca.isBlank()) {
+            dtos = restClient.get().uri("/vehiculos/").retrieve()
+                    .body(new ParameterizedTypeReference<>() {});
         } else {
-            dtos = restClient.get()
-                    .uri("/vehiculos/{marca}/list", marca)
-                    .retrieve()
-                    .body(new ParameterizedTypeReference<List<VehiculoDTO>>(){});
+            dtos = restClient.get().uri("/vehiculos/{marca}/list", marca).retrieve()
+                    .body(new ParameterizedTypeReference<>() {});
         }
-
-
         model.addAttribute("marca", marca);
         model.addAttribute("vehiculos", dtos);
         return "listaVehiculos";
     }
 
-
-    // Crear - obtener datos
     @GetMapping("/new")
-    public String nuevoVehiculo(Model model){
+    public String nuevoVehiculo(Model model) {
         model.addAttribute("vehiculo", new VehiculoDTO());
         model.addAttribute("editMode", true);
         return "vehiculo";
     }
 
-
-    // Crear - guardar datos
     @PostMapping("/")
-    public String guardarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO){
-
-        VehiculoDTO dto = restClient.put()
+    public String guardarVehiculo(@ModelAttribute VehiculoDTO vehiculoDTO) {
+        restClient.post()
                 .uri("/vehiculos/")
                 .body(vehiculoDTO)
                 .retrieve()
                 .body(VehiculoDTO.class);
-
-        return "redirect:/vehiculos/" ;
+        return "redirect:/vehiculos/";
     }
 
-
-    // ver
     @GetMapping("/{id}")
-    public String mostrarVehiculo(Model model, @PathVariable Long id){
-
+    public String mostrarVehiculo(Model model, @PathVariable Long id) {
         VehiculoDTO dto = restClient.get()
                 .uri("/vehiculos/{id}", id)
                 .retrieve()
@@ -100,11 +76,8 @@ public class VehiculoWebController {
         return "vehiculo";
     }
 
-
-    // editar/actualizar
     @GetMapping("/{id}/edit")
-    public String editarVehiculo(Model model, @PathVariable Long id){
-
+    public String editarVehiculo(Model model, @PathVariable Long id) {
         VehiculoDTO dto = restClient.get()
                 .uri("/vehiculos/{id}", id)
                 .retrieve()
@@ -114,34 +87,22 @@ public class VehiculoWebController {
         return "vehiculo";
     }
 
-
-    // editar/actualizar
     @PostMapping("/{id}/edit")
-    public String actualizarVehiculo(@PathVariable long id, @ModelAttribute VehiculoDTO vehiculoDTO){
-
+    public String actualizarVehiculo(@PathVariable Long id, @ModelAttribute VehiculoDTO vehiculoDTO) {
         VehiculoDTO dto = restClient.patch()
-                .uri("/vehiculos/{id}/edit", id)
+                .uri("/vehiculos/{id}", id)
                 .body(vehiculoDTO)
                 .retrieve()
                 .body(VehiculoDTO.class);
-
-        //vehiculoDTO = vehiculoService.actualizarVehiculo(vehiculoDTO);
         return "redirect:/vehiculos/" + dto.getId();
     }
 
-
-    // borrar
     @GetMapping("/{id}/delete")
-    public String eliminarVehiculo(Model model, @PathVariable Long id){
-
+    public String eliminarVehiculo(@PathVariable Long id) {
         restClient.delete()
-            .uri("/vehiculos/{id}/delete", id)
-            .retrieve()
-            .body(VehiculoDTO.class);
-
-        //boolean resultado = vehiculoService.eliminarVehiculo(vehiculoService.mostrarVehiculo(id));
-        //model.addAttribute("resultado", resultado);
+                .uri("/vehiculos/{id}", id)
+                .retrieve()
+                .toBodilessEntity();
         return "redirect:/vehiculos/";
     }
-
 }

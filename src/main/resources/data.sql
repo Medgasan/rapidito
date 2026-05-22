@@ -26,3 +26,4 @@ INSERT INTO reserva (fecha_inicio, fecha_fin, id_vehiculo, id_cliente) VALUES
 INSERT INTO contrato (fecha_inicio, fecha_fin, numero_dias, precio_vehiculo, total_contrato, id_vehiculo, id_cliente) VALUES
     ('2026-05-10', '2026-05-20', 10, 35.50, 355.00, 1, 1),
     ('2026-05-20', '2026-06-01', 12, 40.00, 480.00, 2, 2);
+

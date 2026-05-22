@@ -1,70 +1,64 @@
 package org.example.cursospring.rapidito.api.controller;
 
-
+import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
-import org.example.cursospring.rapidito.api.service.VehiculoService;
+import org.example.cursospring.rapidito.api.entity.Vehiculo;
+import org.example.cursospring.rapidito.api.service.IVehiculoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/vehiculos")
 public class VehiculoApiController {
 
-    private final VehiculoService vehiculoService;
+    private final IVehiculoService vehiculoService;
 
-    public VehiculoApiController(VehiculoService vehiculoService) {
+    public VehiculoApiController(IVehiculoService vehiculoService) {
         this.vehiculoService = vehiculoService;
     }
 
-    @GetMapping("")
-    public String main(){
-        return "redirect:/vehiculos/";
-    }
-
-    // mostrar todos
     @GetMapping("/")
-    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculos(){
+    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculos() {
         return ResponseEntity.ok(vehiculoService.mostrarVehiculos());
     }
 
-    // mostrar por marca
     @GetMapping("/{marca}/list")
-    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculosPorMarca(@PathVariable String marca, Model model){
+    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculosPorMarca(@PathVariable String marca) {
         return ResponseEntity.ok(vehiculoService.mostrarVehiculosPorMarca(marca));
     }
 
-    // Crear - guardar datos
-    @PutMapping("/")
-    public ResponseEntity<VehiculoDTO> guardarVehiculo(@RequestBody VehiculoDTO vehiculoDTO){
+    @PostMapping("/")
+    public ResponseEntity<VehiculoDTO> guardarVehiculo(@Valid @RequestBody VehiculoDTO vehiculoDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoService.crearVehiculo(vehiculoDTO));
     }
 
-    // ver
     @GetMapping("/{id}")
-    public ResponseEntity<VehiculoDTO> mostrarVehiculo(@PathVariable Long id){
+    public ResponseEntity<VehiculoDTO> mostrarVehiculo(@PathVariable Long id) {
         return ResponseEntity.ok(vehiculoService.mostrarVehiculo(id));
     }
 
-    // editar/actualizar
-    @GetMapping("/{id}/edit")
-    public ResponseEntity<VehiculoDTO> editarVehiculo(@PathVariable Long id){
-        return ResponseEntity.ok(vehiculoService.mostrarVehiculo(id));
+    @PatchMapping("/{id}")
+    public ResponseEntity<VehiculoDTO> actualizarVehiculo(@PathVariable Long id,
+                                                          @Valid @RequestBody VehiculoDTO vehiculoDTO) {
+        vehiculoDTO.setId(id);
+        return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
     }
 
-    // editar/actualizar
-    @PatchMapping("/{id}/edit")
-    public ResponseEntity<VehiculoDTO> actualizarVehiculo(@RequestBody VehiculoDTO vehiculoDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(vehiculoDTO);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarVehiculo(@PathVariable Long id) {
+        vehiculoService.eliminarVehiculo(vehiculoService.mostrarVehiculo(id));
+        return ResponseEntity.noContent().build();
     }
 
-    // borrar
-    @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> eliminarVehiculo(Model model, @PathVariable Long id){
-        boolean deleted = vehiculoService.eliminarVehiculo(vehiculoService.mostrarVehiculo(id));
-        return ResponseEntity.ok().build();
+    //Todo: Implementar endpoint para actualizar solo el estado del vehículo
+    // Verificar que el vehículo no tenga ninguna reserva activa antes de permitir el cambio de estado a "Mantenimiento"
+    // Si el estado es "Mantenimiento", el vehículo no debe aparecer en la lista de vehículos disponibles para reserva.
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<VehiculoDTO> actualizarEstadoVehiculo(@PathVariable Long id, @RequestParam String estado) {
+        VehiculoDTO vehiculoDTO = vehiculoService.mostrarVehiculo(id);
+        vehiculoDTO.setEstado(Vehiculo.EstadoVehiculo.valueOf(estado));
+        return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
     }
 }

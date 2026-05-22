@@ -1,125 +1,93 @@
 package org.example.cursospring.rapidito.web.controller;
 
-
 import org.example.cursospring.rapidito.api.dto.ClienteDTO;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
-
 import java.util.List;
 
 @Controller
 @RequestMapping("/clientes")
 public class ClienteWebController {
 
-
     private final RestClient restClient;
-
 
     public ClienteWebController(RestClient restClient) {
         this.restClient = restClient;
     }
 
     @GetMapping("")
-    public String main(){
+    public String main() {
         return "redirect:/clientes/";
     }
 
-
-    // mostrar todos
     @GetMapping("/")
-    public String mostrarClientes(Model model){
+    public String mostrarClientes(Model model) {
         List<ClienteDTO> dtos = restClient.get()
                 .uri("/clientes/")
                 .retrieve()
-                .body(new ParameterizedTypeReference<List<ClienteDTO>>() {});
+                .body(new ParameterizedTypeReference<>() {});
         model.addAttribute("clientes", dtos);
         return "listaClientes";
     }
 
-
-    // Crear - obtener datos
     @GetMapping("/new")
-    public String nuevoCliente(Model model){
-        model.addAttribute("cliente", new  ClienteDTO());
+    public String nuevoCliente(Model model) {
+        model.addAttribute("cliente", new ClienteDTO());
         model.addAttribute("editMode", true);
         return "cliente";
     }
 
-
-    // Crear - guardar datos
     @PostMapping("/")
-    public String guardarCliente(@ModelAttribute ClienteDTO clienteDTO){
-
-        ClienteDTO dto= restClient.put()
+    public String guardarCliente(@ModelAttribute ClienteDTO clienteDTO) {
+        ClienteDTO dto = restClient.post()
                 .uri("/clientes/")
                 .body(clienteDTO)
                 .retrieve()
-                .body(clienteDTO.getClass());
-
+                .body(ClienteDTO.class);
         return "redirect:/clientes/" + dto.getId();
     }
 
-
-    // ver
     @GetMapping("/{id}")
-    public String mostrarCliente(Model model, @PathVariable Long id){
-
+    public String mostrarCliente(Model model, @PathVariable Long id) {
         ClienteDTO dto = restClient.get()
-                .uri("/clientes/{id}", id) // Se añade el ID a la base: http://localhost:8080/api/{id}
+                .uri("/clientes/{id}", id)
                 .retrieve()
-                .body(ClienteDTO.class); // Convertimos el JSON recibido en objeto Java
-
+                .body(ClienteDTO.class);
         model.addAttribute("cliente", dto);
         model.addAttribute("editMode", false);
-
-        return "cliente"; // Retorna la plantilla cliente.html
+        return "cliente";
     }
 
-
-    // editar/actualizar
     @GetMapping("/{id}/edit")
-    public String editarCliente(Model model, @PathVariable Long id){
-
+    public String editarCliente(Model model, @PathVariable Long id) {
         ClienteDTO dto = restClient.get()
-                .uri("/clientes/{id}", id) // Se añade el ID a la base: http://localhost:8080/api/{id}
+                .uri("/clientes/{id}", id)
                 .retrieve()
-                .body(ClienteDTO.class); // Convertimos el JSON recibido en objeto Java
-
+                .body(ClienteDTO.class);
         model.addAttribute("cliente", dto);
-
         model.addAttribute("editMode", true);
         return "cliente";
     }
 
-
-    // editar/actualizar
     @PostMapping("/{id}/edit")
-    public String actualizarCliente(@PathVariable Long id, @ModelAttribute ClienteDTO clienteDTO){
-
+    public String actualizarCliente(@PathVariable Long id, @ModelAttribute ClienteDTO clienteDTO) {
         ClienteDTO dto = restClient.patch()
-                .uri("/clientes/{id}/edit",id)
+                .uri("/clientes/{id}", id)
                 .body(clienteDTO)
                 .retrieve()
-                .body(clienteDTO.getClass());
-
-        return "redirect:/clientes/" + clienteDTO.getId();
+                .body(ClienteDTO.class);
+        return "redirect:/clientes/" + dto.getId();
     }
 
-
-    // borrar
     @GetMapping("/{id}/delete")
-    public String eliminarCliente(Model model, @PathVariable Long id){
-
+    public String eliminarCliente(@PathVariable Long id) {
         restClient.delete()
-                .uri("/clientes/{id}/delete", id)
+                .uri("/clientes/{id}", id)
                 .retrieve()
-                .body(ClienteDTO.class);
-
+                .toBodilessEntity();
         return "redirect:/clientes/";
     }
-
-
 }

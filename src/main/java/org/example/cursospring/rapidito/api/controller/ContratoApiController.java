@@ -1,59 +1,73 @@
 package org.example.cursospring.rapidito.api.controller;
 
-
+import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
-import org.example.cursospring.rapidito.api.service.ContratoService;
+import org.example.cursospring.rapidito.api.entity.Contrato;
+import org.example.cursospring.rapidito.api.service.IContratoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/contratos")
 public class ContratoApiController {
 
-    private final ContratoService contratoService;
+    private final IContratoService contratoService;
 
-    public ContratoApiController(ContratoService contratoService) {
+    public ContratoApiController(IContratoService contratoService) {
         this.contratoService = contratoService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ContratoDTO>> mostrarContratos(Model model) {
-        return ResponseEntity.status(HttpStatus.OK).body(contratoService.mostrarContratos());
+    public ResponseEntity<List<ContratoDTO>> mostrarContratos() {
+        return ResponseEntity.ok(contratoService.mostrarContratos());
     }
 
-//    // Crear - obtener datos
-//    @GetMapping("/new")
-//    public ResponseEntity<ContratoDTO> nuevoContrato(Model model){
-//        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ContratoDTO());
+    @PostMapping("/")
+    public ResponseEntity<ContratoDTO> guardarContrato(@Valid @RequestBody ContratoDTO contratoDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(contratoService.crearContrato(contratoDTO));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContratoDTO> mostrarContrato(@PathVariable Long id) {
+        return ResponseEntity.ok(contratoService.mostrarContrato(id));
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ContratoDTO> actualizarContrato(@PathVariable Long id,
+                                                          @Valid @RequestBody ContratoDTO contratoDTO) {
+        contratoDTO.setId(id);
+        return ResponseEntity.ok(contratoService.actualizarContrato(contratoDTO));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarContrato(@PathVariable Long id) {
+        contratoService.eliminarContrato(contratoService.mostrarContrato(id));
+        return ResponseEntity.noContent().build();
+    }
+
+//    @PatchMapping("/{id}/estado")
+//    public ResponseEntity<ContratoDTO> actualizarEstadoContrato(@PathVariable Long id, @RequestParam String estado) {
+//        ContratoDTO contratoDTO = contratoService.mostrarContrato(id);
+//        contratoDTO.setEstado(Contrato.EstadoContrato.valueOf(estado));
+//        return ResponseEntity.ok(contratoService.actualizarContrato(contratoDTO));
 //    }
 
-    // Crear - guardar datos
-    @PutMapping("/")
-    public ResponseEntity<ContratoDTO> guardarContrato(@RequestBody ContratoDTO contratoDTO){
-        contratoDTO = contratoService.crearContrato(contratoDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(contratoDTO);
+    @PostMapping("/desde-reserva/{id}")
+    public ResponseEntity<ContratoDTO> crearContratoDesdeReserva(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(contratoService.crearContratoDesdeReserva(id));
     }
 
-    // ver
-    @GetMapping("/{id}")
-    public ResponseEntity<ContratoDTO> mostrarContrato(Model model, @PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(contratoService.mostrarContrato(id));
+    @PatchMapping("/{id}/cerrar")
+    public ResponseEntity<ContratoDTO> cerrarContrato(@PathVariable Long id) {
+        return ResponseEntity.ok(contratoService.cerrarContrato(id));
     }
 
-    // editar/actualizar
-    @PatchMapping("/{id}/edit")
-    public ResponseEntity<ContratoDTO> actualizarContrato(@RequestBody ContratoDTO contratoDTO){
-        return ResponseEntity.status(HttpStatus.OK).body(contratoService.actualizarContrato(contratoDTO));
+
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<ContratoDTO> cancelarContrato(@PathVariable Long id) {
+        return ResponseEntity.ok(contratoService.cancelarContrato(id));
     }
 
-    // borrar
-    @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> eliminarContrato(@PathVariable Long id){
-        boolean deleted = contratoService.eliminarContrato(contratoService.mostrarContrato(id));
-        return ResponseEntity.ok().build();
-    }
 }
