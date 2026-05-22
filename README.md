@@ -1,4 +1,4 @@
-# Rapidito
+# Rapidito (Alpha V0.1)
 
 Sistema de gestión de alquiler de vehículos desarrollado con **Java 17 + Spring Boot 4**.
 
