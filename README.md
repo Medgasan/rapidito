@@ -145,6 +145,3 @@ src/main/java/.../rapidito/
 
 ---
 
-## Licencia
-
-MIT
