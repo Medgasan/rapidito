@@ -1,9 +1,10 @@
-package org.example.cursospring.rapidito.api.service;
+package org.example.cursospring.rapidito.api.service.interfaces;
 
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
-import org.jspecify.annotations.Nullable;
+import org.example.cursospring.rapidito.api.entity.Contrato;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IContratoService {
@@ -14,6 +15,6 @@ public interface IContratoService {
     List<ContratoDTO> mostrarContratos();
     ContratoDTO crearContratoDesdeReserva(Long id);
     ContratoDTO cerrarContrato(Long id);
-
-    @Nullable ContratoDTO cancelarContrato(Long id);
+    ContratoDTO cancelarContrato(Long id);
+    List<ContratoDTO> mostrarContratosPorFiltro(Long clienteId, Long vehiculoId, Contrato.EstadoContrato estadoContrato, LocalDate fechaInicio, LocalDate fechaFin);
 }

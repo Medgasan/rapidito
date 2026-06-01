@@ -7,7 +7,11 @@ import org.example.cursospring.rapidito.api.exception.EstadoInvalidoException;
 import org.example.cursospring.rapidito.api.exception.VehiculoNoDisponibleException;
 import org.example.cursospring.rapidito.api.mappers.ReservaMapper;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
+import org.example.cursospring.rapidito.api.service.interfaces.IReservaService;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -73,5 +77,10 @@ public class ReservaService implements IReservaService {
         }
         reserva.setEstado(Reserva.EstadoReserva.CANCELADA);
         return reservaMapper.toReservaDTO(reservaRepository.save(reserva));
+    }
+
+    @Override
+    public List<ReservaDTO> mostrarReservasPorFiltro(Long clienteId, Reserva.EstadoReserva estadoReserva, LocalDate fechaInicio, LocalDate fechaFin) {
+        return reservaMapper.toReservaDTOList(reservaRepository.findByFiltro(clienteId, estadoReserva, fechaInicio, fechaFin));
     }
 }

@@ -8,11 +8,13 @@ import org.example.cursospring.rapidito.api.exception.EstadoInvalidoException;
 import org.example.cursospring.rapidito.api.mappers.ContratoMapper;
 import org.example.cursospring.rapidito.api.repository.ContratoRepository;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
+import org.example.cursospring.rapidito.api.service.interfaces.IContratoService;
 import org.springframework.stereotype.Service;
 
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -116,6 +118,12 @@ public class ContratoService implements IContratoService {
 
         contrato.setEstado(Contrato.EstadoContrato.CERRADO);
         return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
+    }
+
+    //Todo: Implementar método de búsqueda por filtros utilizando el repositorio y mapeando los resultados a DTOs
+    @Override
+    public List<ContratoDTO> mostrarContratosPorFiltro(Long clienteId, Long vehiculoId, Contrato.EstadoContrato estadoContrato, LocalDate fechaInicio, LocalDate fechaFin) {
+        return contratoMapper.toContratoDTOList(contratoRepository.findByFiltro(clienteId, vehiculoId, estadoContrato, fechaInicio, fechaFin));
     }
 
 

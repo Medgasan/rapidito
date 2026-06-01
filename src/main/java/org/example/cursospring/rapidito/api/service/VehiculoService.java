@@ -5,6 +5,7 @@ import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.entity.Vehiculo;
 import org.example.cursospring.rapidito.api.mappers.VehiculoMapper;
 import org.example.cursospring.rapidito.api.repository.VehiculoRepository;
+import org.example.cursospring.rapidito.api.service.interfaces.IVehiculoService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -57,6 +58,11 @@ public class VehiculoService implements IVehiculoService {
         Long id = vehiculo.getId();
         vehiculoRepository.delete(vehiculo);
         return vehiculoRepository.findById(id).isEmpty();
+    }
+
+    @Override
+    public List<VehiculoDTO> mostrarDisponibles(LocalDate fechaInicio, LocalDate fechaFin) {
+        return vehiculoMapper.toVehiculoDTOList(vehiculoRepository.findDisponibles(fechaInicio,fechaFin));
     }
 
 

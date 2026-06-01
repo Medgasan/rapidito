@@ -3,7 +3,7 @@ package org.example.cursospring.rapidito.api.controller;
 import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
 import org.example.cursospring.rapidito.api.entity.Reserva;
-import org.example.cursospring.rapidito.api.service.IReservaService;
+import org.example.cursospring.rapidito.api.service.interfaces.IReservaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,5 +59,8 @@ public class ReservaApiController {
     public ResponseEntity<ReservaDTO> cancelarReserva(@PathVariable Long id) {
         return ResponseEntity.ok(reservaService.cancelarReserva(id));
     }
+
+
+    //Todo: Implementar filtro de reservas del servicio de reservas por cliente, vehículo, fecha, estado, etc.
 
 }

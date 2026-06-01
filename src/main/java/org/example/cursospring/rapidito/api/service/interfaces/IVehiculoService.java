@@ -1,7 +1,8 @@
-package org.example.cursospring.rapidito.api.service;
+package org.example.cursospring.rapidito.api.service.interfaces;
 
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IVehiculoService {
@@ -12,5 +13,6 @@ public interface IVehiculoService {
     VehiculoDTO mostrarVehiculo(Long id);
     VehiculoDTO actualizarVehiculo(VehiculoDTO vehiculoDTO);
     boolean eliminarVehiculo(VehiculoDTO vehiculoDTO);
+    List<VehiculoDTO> mostrarDisponibles(LocalDate fechaInicio, LocalDate fechaFin);
 
 }

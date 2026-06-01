@@ -105,4 +105,10 @@ public class VehiculoWebController {
                 .toBodilessEntity();
         return "redirect:/vehiculos/";
     }
+
+    //Todo: Implementar endpoint para listar solo los vehículos disponibles para reserva en un rango de fechas específico.
+    // Este endpoint debería recibir dos parámetros de fecha (fechaInicio y fechaFin)
+    // y devolver la lista de vehículos que no tienen reservas activas en ese período.
+    // Renderizar listaVehiculos.html
+
 }

@@ -2,8 +2,7 @@ package org.example.cursospring.rapidito.api.controller;
 
 import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
-import org.example.cursospring.rapidito.api.entity.Contrato;
-import org.example.cursospring.rapidito.api.service.IContratoService;
+import org.example.cursospring.rapidito.api.service.interfaces.IContratoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -69,5 +68,7 @@ public class ContratoApiController {
     public ResponseEntity<ContratoDTO> cancelarContrato(@PathVariable Long id) {
         return ResponseEntity.ok(contratoService.cancelarContrato(id));
     }
+
+    //Todo: Implementar filtro de contratos del servicio de contratos por cliente, vehículo, fecha, estado, etc.
 
 }

@@ -3,10 +3,12 @@ package org.example.cursospring.rapidito.api.controller;
 import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.entity.Vehiculo;
-import org.example.cursospring.rapidito.api.service.IVehiculoService;
+import org.example.cursospring.rapidito.api.service.interfaces.IVehiculoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,5 +62,10 @@ public class VehiculoApiController {
         VehiculoDTO vehiculoDTO = vehiculoService.mostrarVehiculo(id);
         vehiculoDTO.setEstado(Vehiculo.EstadoVehiculo.valueOf(estado));
         return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
+    }
+
+    @GetMapping("/disponibles/{fechaInicio}/{fechaFin}")
+    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculosDisponibles(@PathVariable LocalDate fechaInicio, @PathVariable LocalDate fechaFin) {
+        return ResponseEntity.ok(vehiculoService.mostrarDisponibles(fechaInicio, fechaFin));
     }
 }

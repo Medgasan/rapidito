@@ -118,4 +118,6 @@ public class ContratoWebController {
         model.addAttribute("vehiculos", restClient.get().uri("/vehiculos/").retrieve()
                 .body(new ParameterizedTypeReference<List<VehiculoDTO>>() {}));
     }
+
+    //Todo: Implementar filtro de contratos de la Api
 }
