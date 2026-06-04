@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -16,6 +17,9 @@ public class Vehiculo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
+
+    @Column(unique = true)
+    private String slug;
 
     @Column(unique = true)
     private String numeroBastidor;
@@ -46,4 +50,14 @@ public class Vehiculo {
     private EstadoVehiculo estado = EstadoVehiculo.OPERATIVO;
 
     public enum EstadoVehiculo { OPERATIVO, EN_MANTENIMIENTO }
+
+    @PrePersist
+    private void generateSlug() {
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+        this.slug = (marca + "-" + modelo).toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "") // trim guiones
+                + "-" + uuid;
+    }
+
 }

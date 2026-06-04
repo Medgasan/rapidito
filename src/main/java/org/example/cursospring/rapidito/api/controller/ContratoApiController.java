@@ -46,13 +46,6 @@ public class ContratoApiController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PatchMapping("/{id}/estado")
-//    public ResponseEntity<ContratoDTO> actualizarEstadoContrato(@PathVariable Long id, @RequestParam String estado) {
-//        ContratoDTO contratoDTO = contratoService.mostrarContrato(id);
-//        contratoDTO.setEstado(Contrato.EstadoContrato.valueOf(estado));
-//        return ResponseEntity.ok(contratoService.actualizarContrato(contratoDTO));
-//    }
-
     @PostMapping("/desde-reserva/{id}")
     public ResponseEntity<ContratoDTO> crearContratoDesdeReserva(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(contratoService.crearContratoDesdeReserva(id));

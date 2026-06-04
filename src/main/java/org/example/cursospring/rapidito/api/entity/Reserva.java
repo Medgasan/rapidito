@@ -3,6 +3,7 @@ package org.example.cursospring.rapidito.api.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,6 +22,9 @@ public class Reserva {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @Column(unique = true)
+    private String slug;
+
     @Column private LocalDate fechaInicio;
     @Column private LocalDate fechaFin;
 
@@ -37,5 +41,14 @@ public class Reserva {
     private Reserva.EstadoReserva estado = EstadoReserva.PENDIENTE;
 
     public enum EstadoReserva  { PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA }
+
+    @PrePersist
+    private void generateSlug() {
+        String uuid = UUID.randomUUID().toString().substring(0, 8);
+        this.slug = (cliente.getNombre() + "-" + vehiculo.getModelo()).toLowerCase()
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "") // trim guiones
+                + "-" + uuid;
+    }
 
 }

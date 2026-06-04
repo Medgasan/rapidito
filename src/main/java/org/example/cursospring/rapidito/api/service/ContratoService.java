@@ -120,7 +120,7 @@ public class ContratoService implements IContratoService {
         return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
     }
 
-    //Todo: Implementar método de búsqueda por filtros utilizando el repositorio y mapeando los resultados a DTOs
+    //doit: (040626) Implementar metodo de búsqueda por filtros utilizando el repositorio y mapeando los resultados a DTOs
     @Override
     public List<ContratoDTO> mostrarContratosPorFiltro(Long clienteId, Long vehiculoId, Contrato.EstadoContrato estadoContrato, LocalDate fechaInicio, LocalDate fechaFin) {
         return contratoMapper.toContratoDTOList(contratoRepository.findByFiltro(clienteId, vehiculoId, estadoContrato, fechaInicio, fechaFin));
@@ -132,7 +132,7 @@ public class ContratoService implements IContratoService {
         long dias = ChronoUnit.DAYS.between(contrato.getFechaInicio(), contrato.getFechaFin());
         BigDecimal precioFinal = contrato.getVehiculo().getPrecioDia().multiply(BigDecimal.valueOf(dias));
 
-        // TODO: Implementar lógica de descuentos según la duración del alquiler por base de datos
+        // TODO: - Implementar lógica de descuentos según la duración del alquiler por base de datos
 //        if (dias >= 7) {
 //            precioFinal *= 0.9; // 10% de descuento para alquileres de 7 días o más
 //        } else if (dias >= 3) {

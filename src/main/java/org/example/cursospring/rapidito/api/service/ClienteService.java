@@ -6,6 +6,7 @@ import org.example.cursospring.rapidito.api.dto.ClienteHistorialDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
 import org.example.cursospring.rapidito.api.entity.Cliente;
+import org.example.cursospring.rapidito.api.entity.Contrato;
 import org.example.cursospring.rapidito.api.mappers.ClienteMapper;
 import org.example.cursospring.rapidito.api.mappers.ContratoMapper;
 import org.example.cursospring.rapidito.api.mappers.ReservaMapper;
@@ -77,26 +78,13 @@ public class ClienteService implements IClienteService {
     }
 
 
-    // Todo: ( Ya en marcha... Incompleto ) Implementar lógica para mostrar el historial de un cliente, incluyendo reservas y contratos asociados
     @Override
-    public List<ClienteHistorialDTO> mostrarHistorialClientes(Long clienteId, Pageable pageRes, Pageable pageCon) {
-// 1. Buscas el cliente usando el repositorio limpio
-        Cliente cliente = clienteRepository.findById(clienteId)
-                .orElseThrow(() -> new EntityNotFoundException("Cliente no existe"));
-
-        // 2. Buscas sus reservas paginadas
+    public ClienteHistorialDTO mostrarHistorialClientes(Long clienteId, Pageable pageRes, Pageable pageCon) {
+        Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new EntityNotFoundException("Cliente no existe"));
         List<ReservaDTO> reservas = reservaMapper.toReservaDTOList(reservaRepository.findById(clienteId).stream().toList()); //, pageRes);
-
-        // 3. Buscas sus contratos paginados
-        List<ContratoDTO> contratos = contratoRepository
-                .findByClienteId(clienteId, pageCon)
-                .map(this::convertirAContratoDTO);
-
-        // 4. Calculas los agregados (Count y Sum)
-        long totales = contratoRepository.countByClienteIdAndEstado(clienteId, EstadoContrato.CERRADO);
-        BigDecimal sumado = contratoRepository.sumImporteByClienteIdAndEstado(clienteId, EstadoContrato.CERRADO);
-
-        // 5. Instancias tu clase DTO con todas las piezas
+        List<ContratoDTO> contratos = contratoMapper.toContratoDTOList(contratoRepository.findById(clienteId).stream().toList());
+        long totales = contratoRepository.countByCliente_IdAndEstado(clienteId, Contrato.EstadoContrato.CERRADO);
+        BigDecimal sumado = contratoRepository.sumImporteByCliente_IdAndEstado(clienteId, Contrato.EstadoContrato.CERRADO);
         return new ClienteHistorialDTO(
                 clienteMapper.toClienteDTO(cliente),
                 reservas,
@@ -104,6 +92,5 @@ public class ClienteService implements IClienteService {
                 totales,
                 sumado
         );
-    }
     }
 }
