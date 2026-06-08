@@ -12,6 +12,6 @@ public interface IClienteService {
     ClienteDTO mostrarCliente(Long id);
     boolean eliminarCliente(ClienteDTO clienteDTO);
     List<ClienteDTO> mostrarClientes();
-    ClienteHistorialDTO mostrarHistorialClientes(Long clienteId, Pageable pageRes, Pageable pageCon);
+    ClienteHistorialDTO mostrarHistorialClientes(Long clienteId);
 
 }

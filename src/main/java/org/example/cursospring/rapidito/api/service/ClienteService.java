@@ -14,10 +14,9 @@ import org.example.cursospring.rapidito.api.repository.ClienteRepository;
 import org.example.cursospring.rapidito.api.repository.ContratoRepository;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IClienteService;
-import org.springframework.data.domain.Page;
+import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -30,23 +29,26 @@ public class ClienteService implements IClienteService {
     private final ClienteMapper clienteMapper;
     private final ReservaMapper reservaMapper;
     private final ContratoMapper contratoMapper;
+    private final SlugGenerator slugGenerator;
 
     public ClienteService(
             ClienteRepository clienteRepository,
             ReservaRepository reservaRepository,
             ContratoRepository contratoRepository,
-            ClienteMapper clienteMapper, ReservaMapper reservaMapper, ContratoMapper contratoMapper) {
+            ClienteMapper clienteMapper, ReservaMapper reservaMapper, ContratoMapper contratoMapper, SlugGenerator slugGenerator) {
         this.clienteRepository = clienteRepository;
         this.reservaRepository = reservaRepository;
         this.contratoRepository = contratoRepository;
         this.clienteMapper = clienteMapper;
         this.reservaMapper = reservaMapper;
         this.contratoMapper = contratoMapper;
+        this.slugGenerator = slugGenerator;
     }
 
     @Override
     public ClienteDTO crearCliente(ClienteDTO clienteDTO) {
         Cliente cliente = clienteMapper.toCliente(clienteDTO);
+        cliente.setSlug(slugGenerator.generateSlug(cliente.getNombre(), cliente.getApellido()));
         return clienteMapper.toClienteDTO(clienteRepository.save(cliente));
     }
 
@@ -79,10 +81,10 @@ public class ClienteService implements IClienteService {
 
 
     @Override
-    public ClienteHistorialDTO mostrarHistorialClientes(Long clienteId, Pageable pageRes, Pageable pageCon) {
+    public ClienteHistorialDTO mostrarHistorialClientes(Long clienteId) {
         Cliente cliente = clienteRepository.findById(clienteId).orElseThrow(() -> new EntityNotFoundException("Cliente no existe"));
-        List<ReservaDTO> reservas = reservaMapper.toReservaDTOList(reservaRepository.findById(clienteId).stream().toList()); //, pageRes);
-        List<ContratoDTO> contratos = contratoMapper.toContratoDTOList(contratoRepository.findById(clienteId).stream().toList());
+        List<ReservaDTO> reservas = reservaMapper.toReservaDTOList(reservaRepository.findByFiltro(clienteId, null, null, null).stream().toList()); //, pageRes);
+        List<ContratoDTO> contratos = contratoMapper.toContratoDTOList(contratoRepository.findByFiltro(clienteId, null, null, null, null).stream().toList());
         long totales = contratoRepository.countByCliente_IdAndEstado(clienteId, Contrato.EstadoContrato.CERRADO);
         BigDecimal sumado = contratoRepository.sumImporteByCliente_IdAndEstado(clienteId, Contrato.EstadoContrato.CERRADO);
         return new ClienteHistorialDTO(

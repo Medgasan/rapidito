@@ -20,7 +20,6 @@ public class ReservaDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate fechaFin;
 
-    @NotNull
     private Reserva.EstadoReserva estado;
 
 

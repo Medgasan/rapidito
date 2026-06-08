@@ -2,6 +2,8 @@ package org.example.cursospring.rapidito.api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +27,16 @@ public class Cliente {
     @Column private String direccion;
     @Column private String telefono;
     @Column private String email;
+    @Column private String sexo;
+    @Column private String tipoDocumento;
+    @Column private String numeroDocumento;
+    @Column private String nacionalidad;
+    @Column private LocalDate fechaNacimiento;
+    @Column private String tipoCarnet;
+    @Column private String numeroCarnet;
+    @Column private String validezCarnet;
+    @Column private String numeroSoporteCarnet;
+
 
     @OneToMany(mappedBy = "cliente")
     private List<Reserva> reservas;
@@ -32,12 +44,4 @@ public class Cliente {
     @OneToMany(mappedBy = "cliente")
     private List<Contrato> contratos;
 
-    @PrePersist
-    private void generateSlug() {
-        String uuid = UUID.randomUUID().toString().substring(0, 8);
-        this.slug = (nombre + " " + apellido).toLowerCase()
-                .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("^-|-$", "") // trim guiones
-                + "-" + uuid;
-    }
 }

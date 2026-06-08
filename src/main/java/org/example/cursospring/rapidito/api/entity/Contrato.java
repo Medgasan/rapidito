@@ -36,6 +36,8 @@ public class Contrato {
     @Column(precision = 10, scale = 2)
     private BigDecimal totalContrato;
 
+    // Todo: Agregar ConductorAdicional, Seguro, etc.
+
     @ManyToOne
     @JoinColumn(name = "id_vehiculo")
     private Vehiculo vehiculo;
@@ -50,15 +52,5 @@ public class Contrato {
     private EstadoContrato estado = EstadoContrato.ACTIVO;
 
     public enum EstadoContrato { ACTIVO, CERRADO, CANCELADO }
-
-
-    @PrePersist
-    private void generateSlug() {
-        String uuid = UUID.randomUUID().toString().substring(0, 8);
-        this.slug = (cliente.getNombre() + "-" + vehiculo.getModelo()).toLowerCase()
-                .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("^-|-$", "") // trim guiones
-                + "-" + uuid;
-    }
 
 }

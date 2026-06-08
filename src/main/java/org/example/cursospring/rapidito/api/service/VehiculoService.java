@@ -6,6 +6,7 @@ import org.example.cursospring.rapidito.api.entity.Vehiculo;
 import org.example.cursospring.rapidito.api.mappers.VehiculoMapper;
 import org.example.cursospring.rapidito.api.repository.VehiculoRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IVehiculoService;
+import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,10 +17,13 @@ public class VehiculoService implements IVehiculoService {
 
     private final VehiculoRepository vehiculoRepository;
     private final VehiculoMapper vehiculoMapper;
+    private final SlugGenerator slugGenerator;
 
-    public VehiculoService(VehiculoRepository vehiculoRepository, VehiculoMapper vehiculoMapper) {
+
+    public VehiculoService(VehiculoRepository vehiculoRepository, VehiculoMapper vehiculoMapper, SlugGenerator slugGenerator) {
         this.vehiculoRepository = vehiculoRepository;
         this.vehiculoMapper = vehiculoMapper;
+        this.slugGenerator = slugGenerator;
     }
 
     @Override
@@ -35,6 +39,7 @@ public class VehiculoService implements IVehiculoService {
     @Override
     public VehiculoDTO crearVehiculo(VehiculoDTO vehiculoDTO) {
         Vehiculo vehiculo = vehiculoMapper.toVehiculo(vehiculoDTO);
+        vehiculo.setSlug(slugGenerator.generateSlug(vehiculo.getMarca(), vehiculo.getModelo()));
         return vehiculoMapper.toVehiculoDTO(vehiculoRepository.save(vehiculo));
     }
 
@@ -67,7 +72,7 @@ public class VehiculoService implements IVehiculoService {
 
 
     public boolean isDisponible(Long vehiculoId, LocalDate inicio, LocalDate fin) {
-        return !vehiculoRepository.findDisponibles(inicio, fin).stream()
+        return vehiculoRepository.findDisponibles(inicio, fin).stream()
                 .anyMatch(v->v.getId().equals(vehiculoId));
     }
 

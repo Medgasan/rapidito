@@ -1,5 +1,6 @@
 package org.example.cursospring.rapidito.api.repository;
 
+import jakarta.validation.constraints.NotNull;
 import org.example.cursospring.rapidito.api.entity.Contrato;
 import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.entity.Vehiculo;
@@ -18,12 +19,19 @@ public interface ContratoRepository extends JpaRepository<Contrato,Long> {
         SELECT c FROM Contrato c
             WHERE c.cliente.id = :clienteId
             AND c.vehiculo.id = :vehiculoId
-            AND (c.fechaInicio >= :fechaFin OR c.fechaFin <= :fechaInicio)
+            AND (c.fechaInicio >= :fechaInicio OR c.fechaFin <= :fechaFin)
             AND (:estadoContrato IS NULL OR c.estado = :estadoContrato)
     """)
-    List<Contrato> findByFiltro(Long clienteId, Long vehiculoId , Contrato.EstadoContrato estadoContrato, LocalDate fechaInicio, LocalDate fechaFin);
+    List<Contrato> findByFiltro(
+            @NotNull(message = "El ID del cliente es obligatorio y no puede ser nulo") Long clienteId,
+            Long vehiculoId ,
+            Contrato.EstadoContrato estadoContrato,
+            LocalDate fechaInicio, LocalDate fechaFin
+    );
+
 
     long countByCliente_IdAndEstado(Long clienteId, Contrato.EstadoContrato estado);
+
 
     @Query("""
     SELECT COALESCE(SUM(c.totalContrato), 0)

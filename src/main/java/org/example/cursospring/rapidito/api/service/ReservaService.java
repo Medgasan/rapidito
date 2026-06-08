@@ -8,7 +8,7 @@ import org.example.cursospring.rapidito.api.exception.VehiculoNoDisponibleExcept
 import org.example.cursospring.rapidito.api.mappers.ReservaMapper;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IReservaService;
-import org.springframework.data.domain.Page;
+import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,11 +20,13 @@ public class ReservaService implements IReservaService {
     private final ReservaRepository reservaRepository;
     private final VehiculoService vehiculoService;
     private final ReservaMapper reservaMapper;
+    private final SlugGenerator slugGenerator;
 
-    public ReservaService(ReservaRepository reservaRepository, VehiculoService vehiculoService, ReservaMapper reservaMapper) {
+    public ReservaService(ReservaRepository reservaRepository, VehiculoService vehiculoService, ReservaMapper reservaMapper, SlugGenerator slugGenerator) {
         this.reservaRepository = reservaRepository;
         this.vehiculoService = vehiculoService;
         this.reservaMapper = reservaMapper;
+        this.slugGenerator = slugGenerator;
     }
 
     @Override
@@ -32,6 +34,7 @@ public class ReservaService implements IReservaService {
         return reservaMapper.toReservaDTOList(reservaRepository.findAll());
     }
 
+    //TODO: Añadir validaciones de negocio en crearReserva: edad mínima del conductor (≥22 años en Canarias), antigüedad del carnet (≥2 años en Canarias), ITV y seguro del vehículo en vigor
     @Override
     public ReservaDTO crearReserva(ReservaDTO reservaDTO) {
         if (!vehiculoService.isDisponible(
@@ -42,6 +45,11 @@ public class ReservaService implements IReservaService {
                     "Vehículo no disponible en el periodo solicitado");
         }
         Reserva reserva = reservaMapper.toReserva(reservaDTO);
+        reserva.setSlug(slugGenerator.generateSlug(
+                reserva.getCliente().getNombre(),
+                reserva.getVehiculo().getMarca(),
+                reserva.getVehiculo().getModelo())
+        );
         return reservaMapper.toReservaDTO(reservaRepository.save(reserva));
     }
 

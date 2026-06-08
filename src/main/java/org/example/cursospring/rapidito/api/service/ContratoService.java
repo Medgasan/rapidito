@@ -9,6 +9,7 @@ import org.example.cursospring.rapidito.api.mappers.ContratoMapper;
 import org.example.cursospring.rapidito.api.repository.ContratoRepository;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IContratoService;
+import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
 
@@ -24,14 +25,16 @@ public class ContratoService implements IContratoService {
     private final ContratoRepository contratoRepository;
     private final ReservaRepository reservaRepository;
     private final ContratoMapper contratoMapper;
+    private final SlugGenerator slugGenerator;
 
 
     public ContratoService(ContratoRepository contratoRepository,
                            ReservaRepository reservaRepository,
-                           ContratoMapper contratoMapper) {
+                           ContratoMapper contratoMapper, SlugGenerator slugGenerator) {
         this.contratoRepository = contratoRepository;
         this.reservaRepository = reservaRepository;
         this.contratoMapper = contratoMapper;
+        this.slugGenerator = slugGenerator;
     }
 
     @Override
@@ -43,6 +46,11 @@ public class ContratoService implements IContratoService {
     public ContratoDTO crearContrato(ContratoDTO contratoDTO) {
         Contrato contrato = contratoMapper.toContrato(contratoDTO);
         calcularPrecio(contrato);
+        contrato.setSlug(slugGenerator.generateSlug(
+                contrato.getCliente().getNombre(),
+                contrato.getVehiculo().getMarca(),
+                contrato.getVehiculo().getModelo())
+        );
         return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
     }
 
@@ -72,25 +80,25 @@ public class ContratoService implements IContratoService {
     public ContratoDTO crearContratoDesdeReserva(Long id) {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada: " + id));
-
         if (reserva.getEstado() != Reserva.EstadoReserva.CONFIRMADA) {
             throw new EstadoInvalidoException("La reserva debe estar CONFIRMADA para crear un contrato");
         }
-
         Contrato contrato = new Contrato();
         contrato.setVehiculo(reserva.getVehiculo());
         contrato.setCliente(reserva.getCliente());
         contrato.setFechaInicio(reserva.getFechaInicio());
         contrato.setFechaFin(reserva.getFechaFin());
         contrato.setEstado(Contrato.EstadoContrato.ACTIVO);
-
+        contrato.setSlug(slugGenerator.generateSlug(
+                contrato.getCliente().getNombre(),
+                contrato.getVehiculo().getMarca(),
+                contrato.getVehiculo().getModelo())
+        );
         calcularPrecio(contrato);
-
         reserva.setEstado(Reserva.EstadoReserva.COMPLETADA);
         reservaRepository.save(reserva);
 
         return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
-
     }
 
     @Override
@@ -116,7 +124,7 @@ public class ContratoService implements IContratoService {
             throw new EstadoInvalidoException("El contrato debe estar ACTIVO para Cancelarlo");
         }
 
-        contrato.setEstado(Contrato.EstadoContrato.CERRADO);
+        contrato.setEstado(Contrato.EstadoContrato.CANCELADO);
         return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
     }
 

@@ -30,7 +30,6 @@ public class ContratoDTO {
     @Digits(integer = 10, fraction = 2)
     private BigDecimal totalContrato;
 
-    @NotNull
     private Contrato.EstadoContrato estado;
 
     private VehiculoDTO vehiculo;

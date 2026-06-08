@@ -64,8 +64,8 @@ public class VehiculoApiController {
         return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
     }
 
-    @GetMapping("/disponibles/{fechaInicio}/{fechaFin}")
-    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculosDisponibles(@PathVariable LocalDate fechaInicio, @PathVariable LocalDate fechaFin) {
+    @GetMapping("/disponibles?fechaInicio=&fechaFin=")
+    public ResponseEntity<List<VehiculoDTO>> mostrarVehiculosDisponibles(@RequestParam LocalDate fechaInicio, @RequestParam LocalDate fechaFin) {
         return ResponseEntity.ok(vehiculoService.mostrarDisponibles(fechaInicio, fechaFin));
     }
 }
