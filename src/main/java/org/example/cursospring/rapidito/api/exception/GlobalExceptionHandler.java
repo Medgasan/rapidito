@@ -9,6 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
@@ -46,6 +48,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleEstadoInvalido(EstadoInvalidoException ex) {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ErrorResponse(422, "Unprocessable Entity", ex.getMessage()));
+    }
+
+
+    @ExceptionHandler(ReglaNegocioException.class)
+    public ResponseEntity<Map<String, String>> handleReglasNegocio(ReglaNegocioException ex) {
+        HashMap<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "Validación de negocio fallida");
+        errorResponse.put("mensaje", ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
 

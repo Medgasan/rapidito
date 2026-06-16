@@ -4,7 +4,6 @@ import org.example.cursospring.rapidito.api.dto.ReservaDTO;
 import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -14,11 +13,11 @@ public interface ReservaMapper {
     @Mapping(target = "vehiculo.contratos", ignore = true)
     @Mapping(target = "cliente.reservas", ignore = true)
     @Mapping(target = "cliente.contratos", ignore = true)
-    ReservaDTO toReservaDTO(Reserva reserva);
+    ReservaDTO toDTO(Reserva reserva);
 
-    List<ReservaDTO> toReservaDTOList(List<Reserva> reservas);
+    List<ReservaDTO> toDTOList(List<Reserva> reservas);
 
-    List<Reserva> toReservasList(List<ReservaDTO> reservaDTOS);
+    List<Reserva> toEntityList(List<ReservaDTO> reservaDTOS);
 
-    Reserva toReserva(ReservaDTO reservaDTO);
+    Reserva toEntity(ReservaDTO reservaDTO);
 }

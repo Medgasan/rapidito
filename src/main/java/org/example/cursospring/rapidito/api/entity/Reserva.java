@@ -3,17 +3,18 @@ package org.example.cursospring.rapidito.api.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
-@ToString(exclude = {"vehiculo", "cliente"})
+@ToString(exclude = {"vehiculo", "cliente", "conductoresAdicionales"})
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "reserva",
-    indexes = {
-        @Index(name = "idx_reserva_vehiculo_fechas",columnList = "id_vehiculo, fecha_inicio, fecha_fin")
-    }
+        indexes = {
+                @Index(name = "idx_reserva_vehiculo_fechas", columnList = "id_vehiculo, fecha_inicio, fecha_fin")
+        }
 )
 public class Reserva {
 
@@ -25,23 +26,48 @@ public class Reserva {
     @Column(unique = true)
     private String slug;
 
-    @Column private LocalDate fechaInicio;
-    @Column private LocalDate fechaFin;
+    @Column(name = "fecha_inicio")
+    private LocalDate fechaInicio;
 
-    // Todo: Agregar ConductorAdicional, Seguro, etc.
+    @Column(name = "fecha_fin")
+    private LocalDate fechaFin;
 
-    @ManyToOne
-    @JoinColumn(name = "id_vehiculo")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehiculo")
     private Vehiculo vehiculo;
 
-    @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cliente")
     private Cliente cliente;
+
+    /**
+     * CONTEXTO LEGAL ESPAÑA: Datos de la persona que conducirá principalmente el coche.
+     * Mapea los campos directamente en la tabla 'reserva'.
+     */
+    @Embedded
+    private DatosConductor conductorHabitual;
+
+    /**
+     * Lista de conductores adicionales autorizados en el seguro para esta reserva.
+     * cascade = CascadeType.ALL permite guardar los conductores automáticamente al guardar la reserva.
+     */
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ConductorAdicional> conductoresAdicionales = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Reserva.EstadoReserva estado = EstadoReserva.PENDIENTE;
 
-    public enum EstadoReserva  { PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA }
+    public enum EstadoReserva { PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA }
 
+    // --- Métodos Helper para sincronizar la relación bidireccional de forma segura ---
+    public void addConductorAdicional(ConductorAdicional conductor) {
+        this.conductoresAdicionales.add(conductor);
+        conductor.setReserva(this);
+    }
+
+    public void removeConductorAdicional(ConductorAdicional conductor) {
+        this.conductoresAdicionales.remove(conductor);
+        conductor.setReserva(null);
+    }
 }

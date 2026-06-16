@@ -11,15 +11,15 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ClienteMapper {
 
-    Cliente toCliente(ClienteDTO clienteDTO);
+    Cliente toEntity(ClienteDTO clienteDTO);
 
-    List<Cliente> toClientesList(List<ClienteDTO> clienteDTOs);
+    List<Cliente> toEntityList(List<ClienteDTO> clienteDTOs);
 
     @Mapping(target = "reservas", ignore = true)
     @Mapping(target = "contratos", ignore = true)
-    ClienteDTO toClienteDTO(Cliente cliente);
+    ClienteDTO toDTO(Cliente cliente);
 
-    List<ClienteDTO> toClienteDTOList(List<Cliente> clientes);
+    List<ClienteDTO> toDTOList(List<Cliente> clientes);
 
 
 }

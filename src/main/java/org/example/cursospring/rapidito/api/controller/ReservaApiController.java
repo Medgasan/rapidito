@@ -1,12 +1,16 @@
 package org.example.cursospring.rapidito.api.controller;
 
 import jakarta.validation.Valid;
+import org.example.cursospring.rapidito.api.dto.ContratoDTO;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
+import org.example.cursospring.rapidito.api.entity.Contrato;
 import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.service.interfaces.IReservaService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -61,6 +65,14 @@ public class ReservaApiController {
     }
 
 
-    //Todo: Implementar filtro de reservas del servicio de reservas por cliente, vehículo, fecha, estado, etc.
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ReservaDTO>> buscarReservas(@RequestParam(required = false) Long clienteId,
+                                                          @RequestParam(required = false) Reserva.EstadoReserva estado,
+                                                          @RequestParam(required = false) LocalDate fechaInicio,
+                                                          @RequestParam(required = false) LocalDate fechaFin) {
+        // Implementar lógica de búsqueda en el servicio de reservas
+        List<ReservaDTO> reservas = reservaService.mostrarReservasPorFiltro(clienteId,estado,fechaInicio,fechaFin);
+        return ResponseEntity.ok(reservas);
+    }
 
 }

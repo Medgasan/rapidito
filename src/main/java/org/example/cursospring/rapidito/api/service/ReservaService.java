@@ -1,6 +1,9 @@
 package org.example.cursospring.rapidito.api.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.experimental.ExtensionMethod;
+import org.example.cursospring.rapidito.api.dto.ConductorAdicionalDTO;
+import org.example.cursospring.rapidito.api.dto.DatosConductorDTO;
 import org.example.cursospring.rapidito.api.dto.ReservaDTO;
 import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.exception.EstadoInvalidoException;
@@ -8,6 +11,8 @@ import org.example.cursospring.rapidito.api.exception.VehiculoNoDisponibleExcept
 import org.example.cursospring.rapidito.api.mappers.ReservaMapper;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IReservaService;
+import org.example.cursospring.rapidito.api.service.validation.ReglaValidacionConductor;
+import org.example.cursospring.rapidito.api.util.MapperExtensions;
 import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
@@ -15,23 +20,24 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@ExtensionMethod({MapperExtensions.class})
 public class ReservaService implements IReservaService {
 
     private final ReservaRepository reservaRepository;
     private final VehiculoService vehiculoService;
-    private final ReservaMapper reservaMapper;
     private final SlugGenerator slugGenerator;
+    private final List<ReglaValidacionConductor> reglasValidacion;
 
-    public ReservaService(ReservaRepository reservaRepository, VehiculoService vehiculoService, ReservaMapper reservaMapper, SlugGenerator slugGenerator) {
+    public ReservaService(ReservaRepository reservaRepository, VehiculoService vehiculoService, SlugGenerator slugGenerator, List<ReglaValidacionConductor> reglasValidacion) {
         this.reservaRepository = reservaRepository;
         this.vehiculoService = vehiculoService;
-        this.reservaMapper = reservaMapper;
         this.slugGenerator = slugGenerator;
+        this.reglasValidacion = reglasValidacion;
     }
 
     @Override
     public List<ReservaDTO> mostrarReservas() {
-        return reservaMapper.toReservaDTOList(reservaRepository.findAll());
+        return reservaRepository.findAll().toReservaDTOList();
     }
 
     //TODO: Añadir validaciones de negocio en crearReserva: edad mínima del conductor (≥22 años en Canarias), antigüedad del carnet (≥2 años en Canarias), ITV y seguro del vehículo en vigor
@@ -44,27 +50,35 @@ public class ReservaService implements IReservaService {
             throw new VehiculoNoDisponibleException(
                     "Vehículo no disponible en el periodo solicitado");
         }
-        Reserva reserva = reservaMapper.toReserva(reservaDTO);
+
+        for (ReglaValidacionConductor regla : reglasValidacion) {
+            regla.validar(reservaDTO.getConductorHabitual(),reservaDTO.getVehiculo());
+            for (ConductorAdicionalDTO conductorDTO : reservaDTO.getConductoresAdicionales()) {
+                regla.validar(conductorDTO.getDatosConductor(),reservaDTO.getVehiculo());
+            }
+        }
+
+        Reserva reserva = reservaDTO.toEntity();
         reserva.setSlug(slugGenerator.generateSlug(
-                reserva.getCliente().getNombre(),
+                reserva.getCliente().getDatosConductor().getNombre(),
                 reserva.getVehiculo().getMarca(),
                 reserva.getVehiculo().getModelo())
         );
-        return reservaMapper.toReservaDTO(reservaRepository.save(reserva));
+        return reservaRepository.save(reserva).toDTO();
     }
 
     @Override
     public ReservaDTO mostrarReserva(Long id) {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada: " + id));
-        return reservaMapper.toReservaDTO(reserva);
+        return reserva.toDTO();
     }
 
     @Override
     public ReservaDTO actualizarReserva(ReservaDTO reservaDTO) {
         reservaRepository.findById(reservaDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada: " + reservaDTO.getId()));
-        return reservaMapper.toReservaDTO(reservaRepository.save(reservaMapper.toReserva(reservaDTO)));
+        return reservaRepository.save(reservaDTO.toEntity()).toDTO();
     }
 
     @Override
@@ -84,11 +98,11 @@ public class ReservaService implements IReservaService {
             throw new EstadoInvalidoException("No se puede cancelar una reserva completada");
         }
         reserva.setEstado(Reserva.EstadoReserva.CANCELADA);
-        return reservaMapper.toReservaDTO(reservaRepository.save(reserva));
+        return reservaRepository.save(reserva).toDTO();
     }
 
     @Override
     public List<ReservaDTO> mostrarReservasPorFiltro(Long clienteId, Reserva.EstadoReserva estadoReserva, LocalDate fechaInicio, LocalDate fechaFin) {
-        return reservaMapper.toReservaDTOList(reservaRepository.findByFiltro(clienteId, estadoReserva, fechaInicio, fechaFin));
+        return reservaRepository.findByFiltro(clienteId, estadoReserva, fechaInicio, fechaFin).toReservaDTOList();
     }
 }

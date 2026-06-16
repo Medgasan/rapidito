@@ -2,7 +2,9 @@ package org.example.cursospring.rapidito.api.controller;
 
 import jakarta.validation.Valid;
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
+import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.entity.Vehiculo;
+import org.example.cursospring.rapidito.api.exception.EstadoInvalidoException;
 import org.example.cursospring.rapidito.api.service.interfaces.IVehiculoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -54,12 +56,14 @@ public class VehiculoApiController {
         return ResponseEntity.noContent().build();
     }
 
-    //Todo: Implementar endpoint para actualizar solo el estado del vehículo
-    // Verificar que el vehículo no tenga ninguna reserva activa antes de permitir el cambio de estado a "Mantenimiento"
-    // Si el estado es "Mantenimiento", el vehículo no debe aparecer en la lista de vehículos disponibles para reserva.
+
     @PatchMapping("/{id}/estado")
     public ResponseEntity<VehiculoDTO> actualizarEstadoVehiculo(@PathVariable Long id, @RequestParam String estado) {
         VehiculoDTO vehiculoDTO = vehiculoService.mostrarVehiculo(id);
+        if (vehiculoDTO.getReservas().stream().anyMatch(reserva -> reserva.getEstado() != Reserva.EstadoReserva.CANCELADA) && estado.equals("MANTENIMIENTO")) {
+            throw new EstadoInvalidoException(
+                    "No se puede poner en mantenimiento: hay reservas activas");
+        }
         vehiculoDTO.setEstado(Vehiculo.EstadoVehiculo.valueOf(estado));
         return ResponseEntity.ok(vehiculoService.actualizarVehiculo(vehiculoDTO));
     }

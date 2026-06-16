@@ -1,14 +1,17 @@
 package org.example.cursospring.rapidito.api.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.experimental.ExtensionMethod;
+import org.example.cursospring.rapidito.api.dto.ConductorAdicionalDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
 import org.example.cursospring.rapidito.api.entity.Contrato;
 import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.exception.EstadoInvalidoException;
-import org.example.cursospring.rapidito.api.mappers.ContratoMapper;
 import org.example.cursospring.rapidito.api.repository.ContratoRepository;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IContratoService;
+import org.example.cursospring.rapidito.api.service.validation.ReglaValidacionConductor;
+import org.example.cursospring.rapidito.api.util.MapperExtensions;
 import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
@@ -20,45 +23,55 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
+@ExtensionMethod({MapperExtensions.class})
 public class ContratoService implements IContratoService {
 
     private final ContratoRepository contratoRepository;
     private final ReservaRepository reservaRepository;
-    private final ContratoMapper contratoMapper;
     private final SlugGenerator slugGenerator;
+    private final List<ReglaValidacionConductor> reglasValidacion;
 
 
     public ContratoService(ContratoRepository contratoRepository,
                            ReservaRepository reservaRepository,
-                           ContratoMapper contratoMapper, SlugGenerator slugGenerator) {
+                           SlugGenerator slugGenerator, List<ReglaValidacionConductor> reglasValidacion) {
         this.contratoRepository = contratoRepository;
         this.reservaRepository = reservaRepository;
-        this.contratoMapper = contratoMapper;
         this.slugGenerator = slugGenerator;
+        this.reglasValidacion = reglasValidacion;
     }
 
     @Override
     public List<ContratoDTO> mostrarContratos() {
-        return contratoMapper.toContratoDTOList(contratoRepository.findAll());
+        return contratoRepository.findAll().toContratoDTOList();
     }
 
     @Override
     public ContratoDTO crearContrato(ContratoDTO contratoDTO) {
-        Contrato contrato = contratoMapper.toContrato(contratoDTO);
+
+        for (ReglaValidacionConductor regla : reglasValidacion) {
+            regla.validar(contratoDTO.getConductorHabitual(),contratoDTO.getVehiculo());
+            for (ConductorAdicionalDTO conductorDTO : contratoDTO.getConductoresAdicionales()) {
+                regla.validar(conductorDTO.getDatosConductor(),contratoDTO.getVehiculo());
+            }
+        }
+
+        Contrato contrato = contratoDTO.toEntity();
         calcularPrecio(contrato);
+
         contrato.setSlug(slugGenerator.generateSlug(
-                contrato.getCliente().getNombre(),
+                contrato.getCliente().getDatosConductor().getNombre(),
                 contrato.getVehiculo().getMarca(),
                 contrato.getVehiculo().getModelo())
         );
-        return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
+        return (contratoRepository.save(contrato)).toDTO();
     }
 
     @Override
     public ContratoDTO mostrarContrato(Long id) {
         Contrato contrato = contratoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Contrato no encontrado: " + id));
-        return contratoMapper.toContratoDTO(contrato);
+        return contrato.toDTO();
     }
 
     @Override
@@ -69,11 +82,11 @@ public class ContratoService implements IContratoService {
     }
 
     @Override
-    public boolean eliminarContrato(ContratoDTO contratoDTO) {
-        Contrato contrato = contratoMapper.toContrato(contratoDTO);
+    public void eliminarContrato(ContratoDTO contratoDTO) {
+        Contrato contrato = contratoDTO.toEntity();
         Long id = contrato.getId();
         contratoRepository.delete(contrato);
-        return contratoRepository.findById(id).isEmpty();
+        contratoRepository.findById(id);
     }
 
     @Override
@@ -90,7 +103,7 @@ public class ContratoService implements IContratoService {
         contrato.setFechaFin(reserva.getFechaFin());
         contrato.setEstado(Contrato.EstadoContrato.ACTIVO);
         contrato.setSlug(slugGenerator.generateSlug(
-                contrato.getCliente().getNombre(),
+                contrato.getCliente().getDatosConductor().getNombre(),
                 contrato.getVehiculo().getMarca(),
                 contrato.getVehiculo().getModelo())
         );
@@ -98,7 +111,7 @@ public class ContratoService implements IContratoService {
         reserva.setEstado(Reserva.EstadoReserva.COMPLETADA);
         reservaRepository.save(reserva);
 
-        return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
+        return (contratoRepository.save(contrato)).toDTO();
     }
 
     @Override
@@ -111,7 +124,7 @@ public class ContratoService implements IContratoService {
         }
 
         contrato.setEstado(Contrato.EstadoContrato.CERRADO);
-        return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
+        return (contratoRepository.save(contrato)).toDTO();
     }
 
 
@@ -125,13 +138,13 @@ public class ContratoService implements IContratoService {
         }
 
         contrato.setEstado(Contrato.EstadoContrato.CANCELADO);
-        return contratoMapper.toContratoDTO(contratoRepository.save(contrato));
+        return (contratoRepository.save(contrato)).toDTO();
     }
 
     //doit: (040626) Implementar metodo de búsqueda por filtros utilizando el repositorio y mapeando los resultados a DTOs
     @Override
     public List<ContratoDTO> mostrarContratosPorFiltro(Long clienteId, Long vehiculoId, Contrato.EstadoContrato estadoContrato, LocalDate fechaInicio, LocalDate fechaFin) {
-        return contratoMapper.toContratoDTOList(contratoRepository.findByFiltro(clienteId, vehiculoId, estadoContrato, fechaInicio, fechaFin));
+        return (contratoRepository.findByFiltro(clienteId, vehiculoId, estadoContrato, fechaInicio, fechaFin)).toContratoDTOList();
     }
 
 

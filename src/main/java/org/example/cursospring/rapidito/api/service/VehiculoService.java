@@ -1,11 +1,13 @@
 package org.example.cursospring.rapidito.api.service;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.experimental.ExtensionMethod;
 import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.entity.Vehiculo;
 import org.example.cursospring.rapidito.api.mappers.VehiculoMapper;
 import org.example.cursospring.rapidito.api.repository.VehiculoRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IVehiculoService;
+import org.example.cursospring.rapidito.api.util.MapperExtensions;
 import org.example.cursospring.rapidito.api.util.SlugGenerator;
 import org.springframework.stereotype.Service;
 
@@ -13,41 +15,40 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@ExtensionMethod({MapperExtensions.class})
 public class VehiculoService implements IVehiculoService {
 
     private final VehiculoRepository vehiculoRepository;
-    private final VehiculoMapper vehiculoMapper;
     private final SlugGenerator slugGenerator;
 
 
-    public VehiculoService(VehiculoRepository vehiculoRepository, VehiculoMapper vehiculoMapper, SlugGenerator slugGenerator) {
+    public VehiculoService(VehiculoRepository vehiculoRepository, SlugGenerator slugGenerator) {
         this.vehiculoRepository = vehiculoRepository;
-        this.vehiculoMapper = vehiculoMapper;
         this.slugGenerator = slugGenerator;
     }
 
     @Override
     public List<VehiculoDTO> mostrarVehiculos() {
-        return vehiculoMapper.toVehiculoDTOList(vehiculoRepository.findAll());
+        return vehiculoRepository.findAll().toVehiculoDTOList();
     }
 
     @Override
     public List<VehiculoDTO> mostrarVehiculosPorMarca(String marca) {
-        return vehiculoMapper.toVehiculoDTOList(vehiculoRepository.findVehiculoByMarca(marca));
+        return vehiculoRepository.findVehiculoByMarca(marca).toVehiculoDTOList();
     }
 
     @Override
     public VehiculoDTO crearVehiculo(VehiculoDTO vehiculoDTO) {
-        Vehiculo vehiculo = vehiculoMapper.toVehiculo(vehiculoDTO);
+        Vehiculo vehiculo = vehiculoDTO.toEntity();
         vehiculo.setSlug(slugGenerator.generateSlug(vehiculo.getMarca(), vehiculo.getModelo()));
-        return vehiculoMapper.toVehiculoDTO(vehiculoRepository.save(vehiculo));
+        return vehiculoRepository.save(vehiculo).toDTO();
     }
 
     @Override
     public VehiculoDTO mostrarVehiculo(Long id) {
         Vehiculo vehiculo = vehiculoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehiculo no encontrado: " + id));
-        return vehiculoMapper.toVehiculoDTO(vehiculo);
+        return vehiculo.toDTO();
     }
 
     @Override
@@ -59,7 +60,7 @@ public class VehiculoService implements IVehiculoService {
 
     @Override
     public boolean eliminarVehiculo(VehiculoDTO vehiculoDTO) {
-        Vehiculo vehiculo = vehiculoMapper.toVehiculo(vehiculoDTO);
+        Vehiculo vehiculo = vehiculoDTO.toEntity();
         Long id = vehiculo.getId();
         vehiculoRepository.delete(vehiculo);
         return vehiculoRepository.findById(id).isEmpty();
@@ -67,7 +68,7 @@ public class VehiculoService implements IVehiculoService {
 
     @Override
     public List<VehiculoDTO> mostrarDisponibles(LocalDate fechaInicio, LocalDate fechaFin) {
-        return vehiculoMapper.toVehiculoDTOList(vehiculoRepository.findDisponibles(fechaInicio,fechaFin));
+        return vehiculoRepository.findDisponibles(fechaInicio,fechaFin).toVehiculoDTOList();
     }
 
 

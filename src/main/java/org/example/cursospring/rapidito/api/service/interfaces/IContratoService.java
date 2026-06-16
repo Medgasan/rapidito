@@ -11,7 +11,7 @@ public interface IContratoService {
     ContratoDTO crearContrato(ContratoDTO contratoDTO);
     ContratoDTO mostrarContrato(Long id);
     ContratoDTO actualizarContrato(ContratoDTO contratoDTO);
-    boolean eliminarContrato(ContratoDTO contratoDTO);
+    void eliminarContrato(ContratoDTO contratoDTO);
     List<ContratoDTO> mostrarContratos();
     ContratoDTO crearContratoDesdeReserva(Long id);
     ContratoDTO cerrarContrato(Long id);

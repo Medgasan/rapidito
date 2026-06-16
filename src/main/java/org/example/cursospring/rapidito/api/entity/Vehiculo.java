@@ -29,15 +29,17 @@ public class Vehiculo {
     @Column private LocalDate fechaITV;
     @Column private LocalDate fechaSeguro;
     @Column private LocalDate anioFabricacion;
+    @Column(nullable = false) @Enumerated(EnumType.STRING)
+    private EstadoVehiculo estado;
 
+    @Column(nullable = false) @Enumerated(EnumType.STRING)
+    private TipoVehiculo tipo;
 
     @OneToMany(mappedBy = "vehiculo")
     private List<Reserva> reservas;
     @OneToMany(mappedBy = "vehiculo")
     private List<Contrato> contratos;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EstadoVehiculo estado = EstadoVehiculo.OPERATIVO;
-    public enum EstadoVehiculo { OPERATIVO, EN_MANTENIMIENTO }
 
+    public enum EstadoVehiculo { OPERATIVO, EN_MANTENIMIENTO }
+    public enum TipoVehiculo { STANDARD, PREMIUM }
 }

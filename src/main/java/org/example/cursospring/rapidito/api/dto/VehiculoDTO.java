@@ -30,6 +30,8 @@ public class VehiculoDTO {
     @Digits(integer = 8, fraction = 2)
     private BigDecimal precioDia;
 
+    private String tipo;
+
     @NotNull
     private Vehiculo.EstadoVehiculo estado;
 

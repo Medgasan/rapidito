@@ -21,22 +21,14 @@ public class Cliente {
 
     @Column(unique = true)
     private String slug;
-
-    @Column private String nombre;
-    @Column private String apellido;
     @Column private String direccion;
     @Column private String telefono;
     @Column private String email;
     @Column private String sexo;
-    @Column private String tipoDocumento;
-    @Column private String numeroDocumento;
     @Column private String nacionalidad;
-    @Column private LocalDate fechaNacimiento;
-    @Column private String tipoCarnet;
-    @Column private String numeroCarnet;
-    @Column private String validezCarnet;
-    @Column private String numeroSoporteCarnet;
 
+    @Embedded
+    private DatosConductor datosConductor;
 
     @OneToMany(mappedBy = "cliente")
     private List<Reserva> reservas;
