@@ -1,8 +1,12 @@
 package org.example.cursospring.rapidito.api.controller;
 
 import jakarta.validation.Valid;
+import org.example.cursospring.rapidito.api.dto.ClienteDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
+import org.example.cursospring.rapidito.api.dto.ReservaDTO;
+import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.entity.Contrato;
+import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.service.interfaces.IContratoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,8 +54,12 @@ public class ContratoApiController {
     }
 
     @PostMapping("/desde-reserva/{id}")
-    public ResponseEntity<ContratoDTO> crearContratoDesdeReserva(@PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(contratoService.crearContratoDesdeReserva(id));
+    public ResponseEntity<ContratoDTO> crearContratoDesdeReserva(@PathVariable Long id,
+                                                                 @Valid @RequestBody ReservaDTO reservaDTO,
+                                                                 @Valid @RequestBody VehiculoDTO vehiculoDTO
+    ) {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(contratoService.crearContratoDesdeReserva(reservaDTO,vehiculoDTO));
     }
 
     @PatchMapping("/{id}/cerrar")

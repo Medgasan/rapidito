@@ -2,6 +2,8 @@ package org.example.cursospring.rapidito.api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.cursospring.rapidito.api.entity.embedded.DatosConductor;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -73,6 +75,16 @@ public class Contrato {
     @Column(nullable = false)
     private EstadoContrato estado = EstadoContrato.ACTIVO;
 
+    @OneToMany(mappedBy = "Contrato")
+    private List<ContratoSuplemento>  suplemento;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_reserva", nullable = true, unique = true)
+    private Reserva reservaOriginal;
+
+
+
+
     // --------------------------------------------------------------------------------
     // Enums del dominio
     public enum EstadoContrato { ACTIVO, CERRADO, CANCELADO }
@@ -94,4 +106,30 @@ public class Contrato {
         this.conductoresAdicionales.remove(conductor);
         conductor.setContrato(null);
     }
+
+    public void addSuplemento(ContratoSuplemento contratoSuplemento) {
+        this.suplemento.add(contratoSuplemento);
+        contratoSuplemento.setContrato(this);
+    }
+
+    public void removeSuplemento(ContratoSuplemento contratoSuplemento) {
+        this.suplemento.remove(contratoSuplemento);
+        contratoSuplemento.setContrato(null);
+    }
+
+    public void calcularTotalContrato() {
+        BigDecimal total = (this.precioVehiculo != null) ? this.precioVehiculo : BigDecimal.ZERO;
+
+        if (this.suplemento != null) {
+            BigDecimal totalSuplementos = this.suplemento.stream()
+                    .map(ContratoSuplemento::getTotalCalculado)
+                    .filter(java.util.Objects::nonNull) // Evitamos NullPointerException si algún suplemento no se calculó
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            total = total.add(totalSuplementos);
+        }
+
+        this.totalContrato = total;
+    }
+
 }

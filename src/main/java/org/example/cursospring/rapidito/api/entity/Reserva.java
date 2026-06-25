@@ -2,6 +2,8 @@ package org.example.cursospring.rapidito.api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.cursospring.rapidito.api.entity.embedded.DatosConductor;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,11 @@ public class Reserva {
     private Reserva.EstadoReserva estado = EstadoReserva.PENDIENTE;
 
     public enum EstadoReserva { PENDIENTE, CONFIRMADA, CANCELADA, COMPLETADA }
+
+    @OneToMany(mappedBy = "reserva")
+    private List<ReservaSuplemento>  suplemento;
+
+
 
     // --- Métodos Helper para sincronizar la relación bidireccional de forma segura ---
     public void addConductorAdicional(ConductorAdicional conductor) {

@@ -4,9 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.experimental.ExtensionMethod;
 import org.example.cursospring.rapidito.api.dto.ConductorAdicionalDTO;
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
+import org.example.cursospring.rapidito.api.dto.ReservaDTO;
+import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.entity.Contrato;
 import org.example.cursospring.rapidito.api.entity.Reserva;
 import org.example.cursospring.rapidito.api.exception.EstadoInvalidoException;
+import org.example.cursospring.rapidito.api.factory.ContratoFactory;
 import org.example.cursospring.rapidito.api.repository.ContratoRepository;
 import org.example.cursospring.rapidito.api.repository.ReservaRepository;
 import org.example.cursospring.rapidito.api.service.interfaces.IContratoService;
@@ -27,18 +30,16 @@ import java.util.List;
 public class ContratoService implements IContratoService {
 
     private final ContratoRepository contratoRepository;
-    private final ReservaRepository reservaRepository;
     private final SlugGenerator slugGenerator;
     private final List<ReglaValidacionConductor> reglasValidacion;
-
+    private final ContratoFactory contratoFactory; // Inyección limpia
 
     public ContratoService(ContratoRepository contratoRepository,
-                           ReservaRepository reservaRepository,
-                           SlugGenerator slugGenerator, List<ReglaValidacionConductor> reglasValidacion) {
+                           SlugGenerator slugGenerator, List<ReglaValidacionConductor> reglasValidacion, ContratoFactory contratoFactory) {
         this.contratoRepository = contratoRepository;
-        this.reservaRepository = reservaRepository;
         this.slugGenerator = slugGenerator;
         this.reglasValidacion = reglasValidacion;
+        this.contratoFactory = contratoFactory;
     }
 
     @Override
@@ -90,29 +91,12 @@ public class ContratoService implements IContratoService {
     }
 
     @Override
-    public ContratoDTO crearContratoDesdeReserva(Long id) {
-        Reserva reserva = reservaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Reserva no encontrada: " + id));
-        if (reserva.getEstado() != Reserva.EstadoReserva.CONFIRMADA) {
-            throw new EstadoInvalidoException("La reserva debe estar CONFIRMADA para crear un contrato");
-        }
-        Contrato contrato = new Contrato();
-        contrato.setVehiculo(reserva.getVehiculo());
-        contrato.setCliente(reserva.getCliente());
-        contrato.setFechaInicio(reserva.getFechaInicio());
-        contrato.setFechaFin(reserva.getFechaFin());
-        contrato.setEstado(Contrato.EstadoContrato.ACTIVO);
-        contrato.setSlug(slugGenerator.generateSlug(
-                contrato.getCliente().getDatosConductor().getNombre(),
-                contrato.getVehiculo().getMarca(),
-                contrato.getVehiculo().getModelo())
-        );
-        calcularPrecio(contrato);
-        reserva.setEstado(Reserva.EstadoReserva.COMPLETADA);
-        reservaRepository.save(reserva);
+    public ContratoDTO crearContratoDesdeReserva(ReservaDTO reserva, VehiculoDTO vehiculoReal, Long agenteId) {
 
-        return (contratoRepository.save(contrato)).toDTO();
+        Contrato nuevoContrato = contratoFactory.crearDesdeReserva(reserva.toEntity(), vehiculoReal.toEntity(), agenteId);
+        return contratoRepository.save(nuevoContrato).toDTO();
     }
+
 
     @Override
     public ContratoDTO cerrarContrato(Long id) {

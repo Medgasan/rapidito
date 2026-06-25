@@ -1,7 +1,7 @@
 package org.example.cursospring.rapidito.api.mappers;
 
 import org.example.cursospring.rapidito.api.dto.DatosConductorDTO;
-import org.example.cursospring.rapidito.api.entity.DatosConductor;
+import org.example.cursospring.rapidito.api.entity.embedded.DatosConductor;
 import org.mapstruct.Mapper;
 
 import java.util.List;

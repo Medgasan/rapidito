@@ -1,6 +1,8 @@
 package org.example.cursospring.rapidito.api.service.interfaces;
 
 import org.example.cursospring.rapidito.api.dto.ContratoDTO;
+import org.example.cursospring.rapidito.api.dto.ReservaDTO;
+import org.example.cursospring.rapidito.api.dto.VehiculoDTO;
 import org.example.cursospring.rapidito.api.entity.Contrato;
 
 
@@ -13,7 +15,7 @@ public interface IContratoService {
     ContratoDTO actualizarContrato(ContratoDTO contratoDTO);
     void eliminarContrato(ContratoDTO contratoDTO);
     List<ContratoDTO> mostrarContratos();
-    ContratoDTO crearContratoDesdeReserva(Long id);
+    ContratoDTO crearContratoDesdeReserva(ReservaDTO reserva, VehiculoDTO vehiculoReal, Long agenteId);
     ContratoDTO cerrarContrato(Long id);
     ContratoDTO cancelarContrato(Long id);
     List<ContratoDTO> mostrarContratosPorFiltro(Long clienteId, Long vehiculoId, Contrato.EstadoContrato estadoContrato, LocalDate fechaInicio, LocalDate fechaFin);

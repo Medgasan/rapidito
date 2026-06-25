@@ -1,4 +1,4 @@
-package org.example.cursospring.rapidito.api.entity;
+package org.example.cursospring.rapidito.api.entity.embedded;
 
 import jakarta.persistence.*;
 import lombok.Getter;

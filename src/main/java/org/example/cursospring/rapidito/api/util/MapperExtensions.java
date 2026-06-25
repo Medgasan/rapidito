@@ -3,6 +3,7 @@ package org.example.cursospring.rapidito.api.util;
 import lombok.experimental.UtilityClass;
 import org.example.cursospring.rapidito.api.dto.*;
 import org.example.cursospring.rapidito.api.entity.*;
+import org.example.cursospring.rapidito.api.entity.embedded.DatosConductor;
 import org.example.cursospring.rapidito.api.mappers.*;
 import org.mapstruct.factory.Mappers;
 

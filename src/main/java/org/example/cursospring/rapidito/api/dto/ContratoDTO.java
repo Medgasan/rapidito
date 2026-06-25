@@ -2,8 +2,6 @@ package org.example.cursospring.rapidito.api.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.example.cursospring.rapidito.api.entity.Contrato;
-import org.example.cursospring.rapidito.api.entity.DatosConductor;
 import org.example.cursospring.rapidito.api.exception.FechasValidas;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.math.BigDecimal;

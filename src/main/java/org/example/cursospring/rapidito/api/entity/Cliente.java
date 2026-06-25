@@ -2,10 +2,9 @@ package org.example.cursospring.rapidito.api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.cursospring.rapidito.api.entity.embedded.DatosConductor;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @Setter
